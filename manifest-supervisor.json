@@ -1,0 +1,25 @@
+{
+ "name": "Teko المشرف",
+ "short_name": "Teko المشرف",
+ "start_url": "./supervisor.html",
+ "scope": "./",
+ "display": "standalone",
+ "dir": "rtl",
+ "lang": "ar",
+ "background_color": "#FFF8E8",
+ "theme_color": "#F6BC2F",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

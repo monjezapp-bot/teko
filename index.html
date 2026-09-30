@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6BC2F">
+<link rel="manifest" href="manifest-courier.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><title>Teko</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#FFF8E8;--card:#fff;--tx:#1F2733;--sc:#667085;--bd:#E4E7EC;--sf:#F4F5F7;--y:#F6BC2F;--ony:#3A4356;--dk:#465066;--bl:#3E8FD6;--blb:#E3F0FB;--ok:#1E7A4A;--okb:#E3F4EA;--er:#D92D3A;--wn:#FFF1CC;--wnt:#8A5A00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151C;--card:#1A1F29;--tx:#EEF0F3;--sc:#98A2B3;--bd:#2A303A;--sf:#1F242D;--dk:#2C3446;--bl:#6DB3F2;--blb:#1B2B3D;--ok:#5CD38F;--okb:#153524;--er:#F97066;--wn:#3A2F12;--wnt:#F6BC2F}}
+:root[data-theme="dark"]{--bg:#12151C;--card:#1A1F29;--tx:#EEF0F3;--sc:#98A2B3;--bd:#2A303A;--sf:#1F242D;--dk:#2C3446;--bl:#6DB3F2;--blb:#1B2B3D;--ok:#5CD38F;--okb:#153524;--er:#F97066;--wn:#3A2F12;--wnt:#F6BC2F}
+*{box-sizing:border-box;margin:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input{-webkit-user-select:text;user-select:text}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{height:100%;font-family:'IBM Plex Sans Arabic',Tajawal,Cairo,system-ui,sans-serif;background:var(--sf);color:var(--tx);display:flex;flex-direction:column}
+button,input,a{font:inherit;color:inherit}a{text-decoration:none}
+.scr{flex:1;overflow:auto;padding:20px 18px 24px}
+h1{font-size:24px;font-weight:600}.t2{font-size:16px;font-weight:600}.sc{color:var(--sc)}.sm{font-size:13px}.b{font-weight:500}
+.btn{width:100%;height:58px;background:var(--y);color:var(--ony);border:0;border-radius:14px;font-weight:600;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:disabled{background:var(--sf);color:var(--sc);cursor:default}
+.b2{height:48px;padding:0 16px;background:var(--card);border:1.5px solid var(--bd);border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;font-weight:500}
+.b2:disabled,.b2.off{opacity:.4;pointer-events:none}
+.sq{width:56px;height:56px;border-radius:16px;background:var(--y);color:var(--ony);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-top:12px}
+.card.cur{border:2px solid var(--y)}
+.hero{background:var(--dk);color:#fff;border-radius:20px;padding:24px;text-align:center;margin-top:16px}.hero .sc{color:#C3CAD6}
+.huge{font-size:72px;font-weight:600;line-height:1.1;margin:4px 0}
+.r{display:flex;align-items:center;gap:12px}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--okb);color:var(--ok)}
+.al{border-radius:14px;padding:14px 16px;margin-top:12px;background:var(--wn);color:var(--wnt);font-weight:500}.al.ok{background:var(--okb);color:var(--ok)}.al.er{background:#FDECEA;color:var(--er)}
+.f{display:block;margin-top:16px}.f span{display:block;font-size:13px;color:var(--sc);margin-bottom:6px}
+.in{width:100%;height:52px;border:1.5px solid var(--bd);background:var(--card);border-radius:12px;padding:0 14px;font-size:16px}.in:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+.pm{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin-top:8px;border:1.5px solid var(--bd);background:var(--card);border-radius:12px;cursor:pointer;text-align:start}
+.pm.on{border-color:var(--ok)}
+.rk{width:36px;height:36px;border-radius:10px;background:var(--sf);display:flex;align-items:center;justify-content:center;font-weight:600;flex:none}.rk.on{background:var(--y);color:var(--ony)}
+.ac{display:flex;gap:8px;margin-top:12px}.ac .btn{height:48px;font-size:16px;flex:1.4;border-radius:12px}
+.ad{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--blb);color:var(--bl);font-size:14px;cursor:pointer}
+.ad .tg{font-size:11px;padding:2px 8px;border-radius:6px;background:var(--bl);color:#fff}
+.lv:before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-inline-end:6px;animation:pl 1.6s infinite}@keyframes pl{50%{opacity:.3}}
+.md{position:absolute;inset:0;background:#0008;display:flex;align-items:flex-end;z-index:5}.md>div{background:var(--card);width:100%;border-radius:24px 24px 0 0;padding:28px 20px 24px;text-align:center}
+.toast{position:absolute;inset-inline:16px;bottom:16px;background:var(--dk);color:#fff;border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}.toast button{background:none;border:0;color:var(--y);font-weight:600;padding:8px;cursor:pointer}
+.row3{display:flex;align-items:center;gap:12px;padding:12px 0}.row3+.row3{border-top:1px solid var(--bd)}
+
+body{height:100%}#dv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;padding:8px;background:var(--dk);color:#fff;font-size:12px}
+#dv button{height:32px;padding:0 12px;border-radius:999px;border:1px solid #ffffff44;background:none;color:#fff;cursor:pointer}
+.app{position:relative;flex:1;min-height:0;width:100%;max-width:480px;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}.app.wide{max-width:860px}
+@media(min-width:600px){.app{border-inline:1px solid var(--bd)}}
+</style></head><body>
+<div id="app" class="app"></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const DEV=false,SB_URL=TEKO_CFG.url,SB_KEY=TEKO_CFG.key;
+const N=n=>n.toLocaleString('ar-EG'),E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),A2=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const now=()=>new Date().toLocaleTimeString('ar-EG',{hour:'numeric',minute:'2-digit'});
+const ld=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const sb=supabase.createClient(SB_URL,SB_KEY);let S={tot:0,pos:0,pv:null,nx:null,cfg:null,ad:null};const CF=()=>S.cfg,AD_=()=>S.ad;
+const P={pin:'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',chev:'<path d="M15 18l-6-6 6-6"/>',check:'<path d="M20 6L9 17l-5-5"/>'};
+const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+const ad=()=>{const a=AD_();return a&&Date.now()<a.end?`<a class="ad" href="${E(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer"><span class="tg">إعلان</span><span style="flex:1">${E(a.text)}</span>${ic('chev',18)}</a>`:''};
+const beep=()=>{try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(()=>{o.stop();c.close()},350);navigator.vibrate&&navigator.vibrate(200)}catch(e){}};
+const notify=(t,b)=>{try{if(window.Notification&&Notification.permission=='granted')new Notification(t,{body:b,tag:'teko'})}catch(e){}};
+const dist=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742e3*Math.asin(Math.sqrt(h))};
+let GPS=0,LOC=null,LSIG='';
+const chk=()=>{const c=CF();const i=!!(LOC&&c&&dist(LOC.lat,LOC.lng,c.lat,c.lng)<=c.r);if(i!=GPS){GPS=i;return 1}return 0};
+const wg=()=>{try{navigator.geolocation.watchPosition(p=>{LOC={lat:p.coords.latitude,lng:p.coords.longitude};if(chk())render()},()=>{},{enableHighAccuracy:true})}catch(e){}};
+const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'#';
+setInterval(()=>{const a=AD_();if(a&&Date.now()>a.end&&document.querySelector('.ad'))render()},1000);
+document.addEventListener('contextmenu',e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName))e.preventDefault()});
+let M=ld('teko-me',{me:null,perm:{l:0,n:0,i:0},note:'',moved:0,al:0,fn:'',fp:'',gc:0,in:0,lp:0,deny:'',tok:'',err:''});
+const sm=()=>sv('teko-me',M),pos=()=>S.pos||0,inside=()=>DEV?!!M.gc:GPS;
+let DI=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();DI=e});
+if(M.perm.l)wg();
+const okf=()=>M.fn.trim().split(/\s+/).filter(Boolean).length>=3&&/^01\d{9}$/.test(A2(M.fp))&&M.perm.l&&M.perm.n;
+const cb=()=>{const b=document.getElementById('go');if(b)b.disabled=!okf()};
+const fm=()=>{M.fn=document.getElementById('fn').value;M.fp=document.getElementById('fp').value;sm();cb()};
+const pm=async k=>{let ok=0;M.deny='';try{if(k=='l'){ok=await new Promise(r=>navigator.geolocation.getCurrentPosition(()=>r(1),()=>r(0),{timeout:8000}));if(ok)wg()}else if(k=='n'){ok=(await Notification.requestPermission())=='granted'}else if(DI){DI.prompt();ok=1}}catch(e){}
+if(!ok&&DEV&&k!='i')ok=1;if(ok)M.perm[k]=1;else M.deny=k;sm();render()};
+const begin=async()=>{if(!okf())return;const nm=M.fn.trim().replace(/\s+/g,' '),ph=A2(M.fp);try{const{data,error}=await sb.rpc('register',{p_name:nm,p_phone:ph});if(error||!data)throw 0;M.tok=data;M.me={id:'me',name:nm,ph};M.deny='';sm();ST(1);render()}catch(e){M.deny='x';sm();render()}};
+const pr=(k,t,d,req)=>`<button class="pm ${M.perm[k]?'on':''}" onclick="pm('${k}')"><span style="flex:1"><div class="b">${t}</div><div class="sc sm">${d}</div></span><span class="pill" style="${M.perm[k]?'':'background:var(--sf);color:var(--sc)'}">${M.perm[k]?'تم':req?'السماح':'اختياري'}</span></button>`;
+const DN={x:'تعذر التسجيل — تأكد من الاتصال وحاول مرة أخرى',l:'الموقع مرفوض — فعّله من إعدادات المتصفح',n:'الإشعارات مرفوضة — فعّلها من إعدادات المتصفح',i:'من قائمة المتصفح اختر «إضافة إلى الشاشة الرئيسية»'};
+const reg=()=>`<div class="scr"><div class="r" style="margin-bottom:8px"><span class="sq">T</span><span class="t2" style="font-size:22px">Teko</span></div><h1 style="margin-top:20px">أهلاً بيك</h1><div class="sc" style="margin-top:4px">سجّل بياناتك مرة واحدة بس وابدأ حجز دورك</div>
+<label class="f"><span>الاسم الثلاثي</span><input id="fn" class="in" autocomplete="name" placeholder="مثال: أحمد محمد علي" value="${E(M.fn)}" oninput="fm()"></label>
+<label class="f"><span>رقم الموبايل</span><input id="fp" class="in" dir="ltr" inputmode="tel" autocomplete="tel" placeholder="01012345678" value="${E(M.fp)}" oninput="fm()"></label>
+<div class="t2" style="margin-top:24px">الصلاحيات المطلوبة</div>${pr('l','الموقع','عشان نتأكد إنك في مكان الاستلام',1)}${pr('n','الإشعارات والصوت','تنبيه قبل دورك بشخص أو اثنين',1)}${pr('i','تثبيت التطبيق','أضفه على الشاشة الرئيسية',0)}${M.deny?`<div class="al er">${DN[M.deny]}</div>`:''}
+<button id="go" class="btn" style="margin-top:24px" ${okf()?'':'disabled'} onclick="begin()">ابدأ</button></div>`;
+const hd=()=>`<div class="r" style="margin-bottom:4px"><span class="sq" style="width:44px;height:44px;font-size:18px;border-radius:50%">${E(M.me.name[0])}</span><div><div class="b">أهلاً ${E(M.me.name.split(' ')[0])}</div><div class="sc sm lv">مباشر</div></div></div>`;
+const home=()=>`<div class="scr">${hd()}${M.note?`<div class="al ok r" style="justify-content:space-between"><span>${E(M.note)}</span><button onclick="M.note='';sm();render()" style="background:none;border:0;cursor:pointer;font-size:18px" aria-label="إخفاء">✕</button></div>`:''}
+${M.err?`<div class="al er">${E(M.err)}</div>`:''}<div class="card r" style="border-color:${inside()?'var(--ok)':'var(--y)'}"><span style="color:${inside()?'var(--ok)':'var(--wnt)'}">${ic('pin',28)}</span><div><div class="b">${inside()?'أنت داخل موقع الاستلام':'أنت خارج موقع الاستلام'}</div><div class="sc sm">${inside()?'تقدر تحجز دورك دلوقتي':'اقترب من الموقع عشان يشتغل الحجز'}</div></div></div>
+<div class="sc sm" style="text-align:center;margin:28px 0 12px">${N(S.tot)} طيار في الانتظار دلوقتي</div><button class="btn" style="height:72px;font-size:22px" ${inside()?'':'disabled'} onclick="book()">احجز الآن</button>${ad()}</div>`;
+const queue=()=>{const p=pos(),n=S.tot,pv=S.pv?{name:S.pv}:null,nx=S.nx?{name:S.nx}:null,mv=M.moved&&M.moved==p;if(p<=3&&M.al!=p){M.al=p;sm();setTimeout(()=>{beep();notify('استعد للاستلام',p==1?'دورك الآن':'قبلك '+(p-1))},60)}
+const ln=(l,x,k,me)=>`<div class="row3"><span class="rk ${me?'on':''}">${k?N(k):'—'}</span><div style="flex:1"><div class="sc sm">${l}</div><div class="${me?'b':''}">${x?E(x.name):'—'}</div></div>${me?'<span class="pill">أنت</span>':''}</div>`;
+return`<div class="scr">${hd()}${p==1?'<div class="al ok">دورك الآن — توجّه للمشرف واستلم أوردرك</div>':p<=3?`<div class="al">استعد للاستلام — قبلك ${N(p-1)} ${p==2?'طيار':'طيارين'}</div>`:''}${mv?`<div class="al er">المشرف رحّل دورك إلى رقم ${N(p)}</div>`:''}
+<div class="hero"><div class="sc">دورك رقم</div><div class="huge">${N(p)}</div><div class="sc">من ${N(n)} في الانتظار</div></div>
+<div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
+const sync=()=>{const p=pos();if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
+const book=async()=>{if(!inside()||pos()||!LOC)return;try{const{data,error}=await sb.rpc('book',{p_token:M.tok,p_lat:LOC.lat,p_lng:LOC.lng});if(error||!data||data.err)throw data&&data.err||1;S=data;M.mod=1;M.note='';M.err='';M.moved=0;sync()}catch(e){M.err=e=='outside'?'أنت خارج موقع الاستلام':'تعذر الحجز، حاول مرة أخرى';sm();render()}};
+const ST=async f=>{if(!M.tok)return;try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();sync()}catch(e){}};
+function render(){document.getElementById('app').innerHTML=!M.me?reg():pos()?queue():home()}
+sb.channel('teko').on('broadcast',{event:'q'},()=>ST()).subscribe();setInterval(()=>ST(),4000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ST()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();ST();
+</script></body></html>
