@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F6BC2F">
-<link rel="manifest" href="manifest-courier.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><title>Teko</title>
+<meta name="theme-color" content="#00A8E1">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><title>Teko</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
 <style>
-:root{--bg:#FFF8E8;--card:#fff;--tx:#1F2733;--sc:#667085;--bd:#E4E7EC;--sf:#F4F5F7;--y:#F6BC2F;--ony:#3A4356;--dk:#465066;--bl:#3E8FD6;--blb:#E3F0FB;--ok:#1E7A4A;--okb:#E3F4EA;--er:#D92D3A;--wn:#FFF1CC;--wnt:#8A5A00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#F3F9FD;--card:#fff;--tx:#1F2733;--sc:#667085;--bd:#E4E7EC;--sf:#F4F5F7;--y:#00A8E1;--ony:#062A40;--dk:#1C243B;--bl:#3E8FD6;--blb:#E3F0FB;--ok:#1E7A4A;--okb:#E3F4EA;--er:#D92D3A;--wn:#FFF1CC;--wnt:#8A5A00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151C;--card:#1A1F29;--tx:#EEF0F3;--sc:#98A2B3;--bd:#2A303A;--sf:#1F242D;--dk:#2C3446;--bl:#6DB3F2;--blb:#1B2B3D;--ok:#5CD38F;--okb:#153524;--er:#F97066;--wn:#3A2F12;--wnt:#F6BC2F}}
 :root[data-theme="dark"]{--bg:#12151C;--card:#1A1F29;--tx:#EEF0F3;--sc:#98A2B3;--bd:#2A303A;--sf:#1F242D;--dk:#2C3446;--bl:#6DB3F2;--blb:#1B2B3D;--ok:#5CD38F;--okb:#153524;--er:#F97066;--wn:#3A2F12;--wnt:#F6BC2F}
 *{box-sizing:border-box;margin:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
@@ -44,21 +44,30 @@ body{height:100%}#dv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;just
 #dv button{height:32px;padding:0 12px;border-radius:999px;border:1px solid #ffffff44;background:none;color:#fff;cursor:pointer}
 .app{position:relative;flex:1;min-height:0;width:100%;max-width:480px;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}.app.wide{max-width:860px}
 @media(min-width:600px){.app{border-inline:1px solid var(--bd)}}
+.lb{display:flex;align-items:center;justify-content:center;width:190px;height:92px;margin:0 auto 22px;border-radius:26px;background:var(--dk);color:#fff;font-weight:700;font-size:30px}.lb img{width:130px;height:auto;display:block}
+.rg{display:flex;flex-direction:column;padding-top:36px}
+.lg{text-align:center;margin-bottom:30px}.lg img,.lg .sq{width:88px;height:88px;object-fit:contain;display:flex;margin:0 auto 20px;border-radius:24px}.lg .sq{font-size:42px}
+.lg h1{font-size:28px;line-height:1.3}.sub{color:var(--sc);font-size:15px;line-height:1.7;margin-top:8px}
+.f span{font-size:14px;font-weight:500;color:var(--tx);margin-bottom:8px}.f small{display:block;font-size:12px;color:var(--sc);margin-top:6px}
+.in{height:54px}.in[dir=ltr]{text-align:right}
+.sec{font-size:13px;font-weight:600;color:var(--sc);margin:30px 0 2px}
+.pm{padding:14px}.pi{width:44px;height:44px;border-radius:12px;background:var(--sf);display:flex;align-items:center;justify-content:center;flex:none;color:var(--sc)}.pm.on .pi{background:var(--okb);color:var(--ok)}
+.rg .btn{margin-top:30px}.fn{text-align:center;font-size:12px;color:var(--sc);margin-top:14px;line-height:1.7}
 </style></head><body>
 <div id="app" class="app"></div>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 const DEV=false,SB_URL=TEKO_CFG.url,SB_KEY=TEKO_CFG.key;
-const N=n=>n.toLocaleString('ar-EG'),E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),A2=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
-const now=()=>new Date().toLocaleTimeString('ar-EG',{hour:'numeric',minute:'2-digit'});
+const N=n=>n.toLocaleString('en-US'),E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),A2=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const now=()=>new Date().toLocaleTimeString('ar-EG-u-nu-latn',{hour:'numeric',minute:'2-digit'});
 const ld=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const sb=supabase.createClient(SB_URL,SB_KEY);let S={tot:0,pos:0,pv:null,nx:null,cfg:null,ad:null};const CF=()=>S.cfg,AD_=()=>S.ad;
-const P={pin:'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',chev:'<path d="M15 18l-6-6 6-6"/>',check:'<path d="M20 6L9 17l-5-5"/>'};
+const P={pin:'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',dl:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',chev:'<path d="M15 18l-6-6 6-6"/>',check:'<path d="M20 6L9 17l-5-5"/>'};
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
 const ad=()=>{const a=AD_();return a&&Date.now()<a.end?`<a class="ad" href="${E(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer"><span class="tg">إعلان</span><span style="flex:1">${E(a.text)}</span>${ic('chev',18)}</a>`:''};
 let AC=null;const ua=()=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume()}catch(e){}};['touchstart','click','keydown'].forEach(e=>addEventListener(e,ua,{passive:true}));
-const beep=()=>{try{ua();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=880;g.gain.value=.2;o.start();setTimeout(()=>o.stop(),450);navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}};
+const beep=()=>{try{ua();const t=AC.currentTime,g=AC.createGain();g.gain.value=.7;g.connect(AC.destination);for(let i=0;i<12;i++){const o=AC.createOscillator(),e=AC.createGain(),s=t+i*.25;o.type='triangle';o.frequency.value=i%2?1175:880;o.connect(e);e.connect(g);e.gain.setValueAtTime(0,s);e.gain.linearRampToValueAtTime(1,s+.02);e.gain.exponentialRampToValueAtTime(.001,s+.23);o.start(s);o.stop(s+.25)}navigator.vibrate&&navigator.vibrate([400,150,400,150,400,150,400,150,400])}catch(e){}};
 const notify=async(t,b)=>{try{if(!window.Notification||Notification.permission!='granted')return;const o={body:b,tag:'teko',renotify:true,vibrate:[200,100,200],icon:'icon-192.png'};const r=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(r)await r.showNotification(t,o);else new Notification(t,o)}catch(e){}};
 const dist=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742e3*Math.asin(Math.sqrt(h))};
 let GPS=0,LOC=null,LSIG='';
@@ -77,13 +86,13 @@ const fm=()=>{M.fn=document.getElementById('fn').value;M.fp=document.getElementB
 const pm=async k=>{let ok=0;M.deny='';try{if(k=='l'){ok=await new Promise(r=>navigator.geolocation.getCurrentPosition(()=>r(1),()=>r(0),{timeout:8000}));if(ok)wg()}else if(k=='n'){ok=(await Notification.requestPermission())=='granted'}else if(DI){DI.prompt();ok=1}}catch(e){}
 if(!ok&&DEV&&k!='i')ok=1;if(ok)M.perm[k]=1;else M.deny=k;sm();render()};
 const begin=async()=>{if(!okf())return;const nm=M.fn.trim().replace(/\s+/g,' '),ph=A2(M.fp);try{const{data,error}=await sb.rpc('register',{p_name:nm,p_phone:ph});if(error||!data)throw error||new Error('empty');M.tok=data;M.me={id:'me',name:nm,ph};M.deny='';sm();ST(1);render()}catch(e){M.deny='x';M.dm=String(e&&e.message||e).slice(0,140);sm();render()}};
-const pr=(k,t,d,req)=>`<button class="pm ${M.perm[k]?'on':''}" onclick="pm('${k}')"><span style="flex:1"><div class="b">${t}</div><div class="sc sm">${d}</div></span><span class="pill" style="${M.perm[k]?'':'background:var(--sf);color:var(--sc)'}">${M.perm[k]?'تم':req?'السماح':'اختياري'}</span></button>`;
+const pr=(k,t,d,req)=>`<button class="pm ${M.perm[k]?'on':''}" onclick="pm('${k}')"><span class="pi">${ic(k=='l'?'pin':k=='n'?'bell':'dl',22)}</span><span style="flex:1"><div class="b">${t}</div><div class="sc sm" style="margin-top:2px">${d}</div></span><span class="pill" style="${M.perm[k]?'':'background:var(--sf);color:var(--sc)'}">${M.perm[k]?'تم':req?'السماح':'اختياري'}</span></button>`;
 const DN={x:'تعذر التسجيل — تأكد من الاتصال وحاول مرة أخرى',l:'الموقع مرفوض — فعّله من إعدادات المتصفح',n:'الإشعارات مرفوضة — فعّلها من إعدادات المتصفح',i:'من قائمة المتصفح اختر «إضافة إلى الشاشة الرئيسية»'};
-const reg=()=>`<div class="scr"><div class="r" style="margin-bottom:8px"><span class="sq">T</span><span class="t2" style="font-size:22px">Teko</span></div><h1 style="margin-top:20px">أهلاً بيك</h1><div class="sc" style="margin-top:4px">سجّل بياناتك مرة واحدة بس وابدأ حجز دورك</div>
-<label class="f"><span>الاسم الثلاثي</span><input id="fn" class="in" autocomplete="name" placeholder="مثال: أحمد محمد علي" value="${E(M.fn)}" oninput="fm()"></label>
-<label class="f"><span>رقم الموبايل</span><input id="fp" class="in" dir="ltr" inputmode="tel" autocomplete="tel" placeholder="01012345678" value="${E(M.fp)}" oninput="fm()"></label>
-<div class="t2" style="margin-top:24px">الصلاحيات المطلوبة</div>${pr('l','الموقع','عشان نتأكد إنك في مكان الاستلام',1)}${pr('n','الإشعارات والصوت','تنبيه قبل دورك بشخص أو اثنين',1)}${pr('i','تثبيت التطبيق','أضفه على الشاشة الرئيسية',0)}${M.deny?`<div class="al er">${DN[M.deny]}${M.deny=='x'&&M.dm?`<div dir="ltr" style="font-size:12px;margin-top:6px;user-select:text;-webkit-user-select:text">${E(M.dm)}</div>`:''}</div>`:''}
-<button id="go" class="btn" style="margin-top:24px" ${okf()?'':'disabled'} onclick="begin()">ابدأ</button></div>`;
+const reg=()=>`<div class="scr rg"><div class="lg"><span class="lb"><img src="logo.png" alt="Teko" onerror="this.replaceWith('Teko')"></span><h1>أهلاً بيك في Teko</h1><p class="sub">سجّل بياناتك مرة واحدة وابدأ حجز دورك</p></div>
+<label class="f" style="margin-top:0"><span>الاسم الثلاثي</span><input id="fn" class="in" autocomplete="name" placeholder="مثال: أحمد محمد علي" value="${E(M.fn)}" oninput="fm()"></label>
+<label class="f"><span>رقم الموبايل</span><input id="fp" class="in" dir="ltr" inputmode="tel" autocomplete="tel" placeholder="01012345678" value="${E(M.fp)}" oninput="fm()"><small>11 رقم يبدأ بـ 01</small></label>
+<div class="sec">الصلاحيات المطلوبة</div>${pr('l','الموقع','عشان نتأكد إنك في مكان الاستلام',1)}${pr('n','الإشعارات والصوت','تنبيه قبل دورك بشخص أو اثنين',1)}${pr('i','تثبيت التطبيق','أضفه على الشاشة الرئيسية',0)}${M.deny?`<div class="al er">${DN[M.deny]}${M.deny=='x'&&M.dm?`<div dir="ltr" style="font-size:12px;margin-top:6px;user-select:text;-webkit-user-select:text">${E(M.dm)}</div>`:''}</div>`:''}
+<button id="go" class="btn" ${okf()?'':'disabled'} onclick="begin()">ابدأ</button><p class="fn">بياناتك بتتحفظ على جهازك ومش هتحتاج تسجّل تاني</p></div>`;
 const hd=()=>`<div class="r" style="margin-bottom:4px"><span class="sq" style="width:44px;height:44px;font-size:18px;border-radius:50%">${E(M.me.name[0])}</span><div><div class="b">أهلاً ${E(M.me.name.split(' ')[0])}</div><div class="sc sm lv">مباشر</div></div></div>`;
 const home=()=>`<div class="scr">${hd()}${M.note?`<div class="al ok r" style="justify-content:space-between"><span>${E(M.note)}</span><button onclick="M.note='';sm();render()" style="background:none;border:0;cursor:pointer;font-size:18px" aria-label="إخفاء">✕</button></div>`:''}
 ${M.err?`<div class="al er">${E(M.err)}</div>`:''}<div class="card r" style="border-color:${inside()?'var(--ok)':'var(--y)'}"><span style="color:${inside()?'var(--ok)':'var(--wnt)'}">${ic('pin',28)}</span><div><div class="b">${inside()?'أنت داخل موقع الاستلام':'أنت خارج موقع الاستلام'}</div><div class="sc sm">${inside()?'تقدر تحجز دورك دلوقتي':'اقترب من الموقع عشان يشتغل الحجز'}</div></div></div>
