@@ -53,6 +53,13 @@ body{height:100%}#dv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;just
 .sec{font-size:13px;font-weight:600;color:var(--sc);margin:30px 0 2px}
 .pm{padding:14px}.pi{width:44px;height:44px;border-radius:12px;background:var(--sf);display:flex;align-items:center;justify-content:center;flex:none;color:var(--sc)}.pm.on .pi{background:var(--okb);color:var(--ok)}
 .rg .btn{margin-top:30px}.fn{text-align:center;font-size:12px;color:var(--sc);margin-top:14px;line-height:1.7}
+.off{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;background:var(--er);color:#fff;text-align:center;padding:10px 12px;font-size:14px;font-weight:600}
+.adi{display:block;margin:12px 0;border-radius:14px;overflow:hidden;border:1px solid var(--bd);background:var(--card)}.adi img{width:100%;height:auto;display:block;-webkit-user-drag:none}
+.cl{position:fixed;inset:0;z-index:60;background:rgba(6,24,40,.62);display:flex;align-items:center;justify-content:center;padding:24px}
+.cl .cd{width:100%;max-width:380px;background:var(--card);border-radius:24px;padding:26px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.cl .ib{width:72px;height:72px;border-radius:50%;background:var(--y);color:var(--ony);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:cp .7s ease-in-out 5}
+.cl h2{font-size:24px;line-height:1.6;margin:6px 0 22px}
+@keyframes cp{50%{transform:scale(1.15)}}
 </style></head><body>
 <div id="app" class="app"></div>
 <script src="config.js"></script>
@@ -65,14 +72,14 @@ const ld=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?
 const sb=supabase.createClient(SB_URL,SB_KEY);let S={tot:0,pos:0,pv:null,nx:null,cfg:null,ad:null};const CF=()=>S.cfg,AD_=()=>S.ad;
 const P={pin:'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',dl:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',chev:'<path d="M15 18l-6-6 6-6"/>',check:'<path d="M20 6L9 17l-5-5"/>'};
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
-const ad=()=>{const a=AD_();return a&&Date.now()<a.end?`<a class="ad" href="${E(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer"><span class="tg">إعلان</span><span style="flex:1">${E(a.text)}</span>${ic('chev',18)}</a>`:''};
+const ad=()=>{const a=AD_();if(!(a&&Date.now()<a.end))return'';const u=safeUrl(a.url);if(a.image){const im=`<img src="${E(safeUrl(a.image))}" alt="" draggable="false" onerror="this.closest('.adi').remove()">`;return u=='#'?`<div class="adi">${im}</div>`:`<a class="adi" href="${E(u)}" target="_blank" rel="noopener noreferrer">${im}</a>`}const tx=a.tag==null?'إعلان':a.tag,tg=`${tx?`<span class="tg">${E(tx)}</span>`:''}<span style="flex:1;line-height:1.7">${E(a.text)}</span>`;return u=='#'?`<div class="ad" style="cursor:default">${tg}</div>`:`<a class="ad" href="${E(u)}" target="_blank" rel="noopener noreferrer">${tg}${ic('chev',18)}</a>`};
 let AC=null;const ua=()=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume()}catch(e){}};['touchstart','click','keydown'].forEach(e=>addEventListener(e,ua,{passive:true}));
 const beep=()=>{try{ua();const t=AC.currentTime,g=AC.createGain();g.gain.value=.7;g.connect(AC.destination);for(let i=0;i<12;i++){const o=AC.createOscillator(),e=AC.createGain(),s=t+i*.25;o.type='triangle';o.frequency.value=i%2?1175:880;o.connect(e);e.connect(g);e.gain.setValueAtTime(0,s);e.gain.linearRampToValueAtTime(1,s+.02);e.gain.exponentialRampToValueAtTime(.001,s+.23);o.start(s);o.stop(s+.25)}navigator.vibrate&&navigator.vibrate([400,150,400,150,400,150,400,150,400])}catch(e){}};
 const notify=async(t,b)=>{try{if(!window.Notification||Notification.permission!='granted')return;const o={body:b,tag:'teko',renotify:true,vibrate:[200,100,200],icon:'icon-192.png'};const r=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(r)await r.showNotification(t,o);else new Notification(t,o)}catch(e){}};
 const dist=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742e3*Math.asin(Math.sqrt(h))};
 let GPS=0,LOC=null,LSIG='';
 const chk=()=>{const c=CF();const i=!!(LOC&&c&&dist(LOC.lat,LOC.lng,c.lat,c.lng)<=c.r);if(i!=GPS){GPS=i;return 1}return 0};
-const wg=()=>{try{navigator.geolocation.watchPosition(p=>{LOC={lat:p.coords.latitude,lng:p.coords.longitude};if(chk())render()},()=>{},{enableHighAccuracy:true})}catch(e){}};
+const wg=()=>{try{navigator.geolocation.watchPosition(p=>{LOC={lat:p.coords.latitude,lng:p.coords.longitude};if(chk()){render();ST(1)}},()=>{},{enableHighAccuracy:true})}catch(e){}};
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'#';
 setInterval(()=>{const a=AD_();if(a&&Date.now()>a.end&&document.querySelector('.ad'))render()},1000);
 document.addEventListener('contextmenu',e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName))e.preventDefault()});
@@ -83,11 +90,17 @@ if(M.perm.l)wg();
 const okf=()=>M.fn.trim().split(/\s+/).filter(Boolean).length>=3&&/^01\d{9}$/.test(A2(M.fp))&&M.perm.l&&M.perm.n;
 const cb=()=>{const b=document.getElementById('go');if(b)b.disabled=!okf()};
 const fm=()=>{M.fn=document.getElementById('fn').value;M.fp=document.getElementById('fp').value;sm();cb()};
-const pm=async k=>{let ok=0;M.deny='';try{if(k=='l'){ok=await new Promise(r=>navigator.geolocation.getCurrentPosition(()=>r(1),()=>r(0),{timeout:8000}));if(ok)wg()}else if(k=='n'){ok=(await Notification.requestPermission())=='granted'}else if(DI){DI.prompt();ok=1}}catch(e){}
-if(!ok&&DEV&&k!='i')ok=1;if(ok)M.perm[k]=1;else M.deny=k;sm();render()};
+const inApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const pm=async k=>{let ok=0,dn=k;M.deny='';try{if(k=='l'){const r=await new Promise(res=>navigator.geolocation.getCurrentPosition(()=>res(0),e=>res(e.code),{timeout:20000,maximumAge:60000}));ok=r===0;if(ok)wg();else if(r!==1)dn='l2'}else if(k=='n'){if(!window.Notification)dn='n2';else ok=(await Notification.requestPermission())=='granted'}else if(inApp())ok=1;else if(DI){DI.prompt();ok=1}else dn=/iPhone|iPad|iPod/.test(navigator.userAgent)?'i2':'i'}catch(e){}
+if(ok)M.perm[k]=1;else M.deny=dn;sm();render()};
+const syncPerm=async()=>{let ch=0;try{if(navigator.permissions){const g=await navigator.permissions.query({name:'geolocation'});if(g.state=='granted'&&!M.perm.l){M.perm.l=1;wg();ch=1}}}catch(e){}
+if(window.Notification&&Notification.permission=='granted'&&!M.perm.n){M.perm.n=1;ch=1}
+if(inApp()&&!M.perm.i){M.perm.i=1;ch=1}
+if(ch){sm();render()}};
+syncPerm();document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncPerm()});
 const begin=async()=>{if(!okf())return;const nm=M.fn.trim().replace(/\s+/g,' '),ph=A2(M.fp);try{const{data,error}=await sb.rpc('register',{p_name:nm,p_phone:ph});if(error||!data)throw error||new Error('empty');M.tok=data;M.me={id:'me',name:nm,ph};M.deny='';sm();ST(1);render()}catch(e){M.deny='x';M.dm=String(e&&e.message||e).slice(0,140);sm();render()}};
 const pr=(k,t,d,req)=>`<button class="pm ${M.perm[k]?'on':''}" onclick="pm('${k}')"><span class="pi">${ic(k=='l'?'pin':k=='n'?'bell':'dl',22)}</span><span style="flex:1"><div class="b">${t}</div><div class="sc sm" style="margin-top:2px">${d}</div></span><span class="pill" style="${M.perm[k]?'':'background:var(--sf);color:var(--sc)'}">${M.perm[k]?'تم':req?'السماح':'اختياري'}</span></button>`;
-const DN={x:'تعذر التسجيل — تأكد من الاتصال وحاول مرة أخرى',l:'الموقع مرفوض — فعّله من إعدادات المتصفح',n:'الإشعارات مرفوضة — فعّلها من إعدادات المتصفح',i:'من قائمة المتصفح اختر «إضافة إلى الشاشة الرئيسية»'};
+const DN={x:'تعذر التسجيل — تأكد من الاتصال وحاول مرة أخرى',l:'الموقع مرفوض — فعّله من إعدادات الموبايل ثم ارجع للتطبيق',n:'الإشعارات مرفوضة — فعّلها من إعدادات الموبايل ثم ارجع للتطبيق',i:'افتح الرابط من متصفح Chrome (مش من واتساب)، ثم اضغط ⋮ واختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»',i2:'افتح الرابط من Safari، اضغط زر المشاركة ثم «Add to Home Screen»',l2:'تعذر تحديد موقعك — شغّل الـ GPS وجرّب تاني',n2:'الإشعارات مش متاحة في المتصفح ده — ثبّت التطبيق على الشاشة الرئيسية وافتحه منها'};
 const reg=()=>`<div class="scr rg"><div class="lg"><span class="lb"><img src="logo.png" alt="Teko" onerror="this.replaceWith('Teko')"></span><h1>أهلاً بيك في Teko</h1><p class="sub">سجّل بياناتك مرة واحدة وابدأ حجز دورك</p></div>
 <label class="f" style="margin-top:0"><span>الاسم الثلاثي</span><input id="fn" class="in" autocomplete="name" placeholder="مثال: أحمد محمد علي" value="${E(M.fn)}" oninput="fm()"></label>
 <label class="f"><span>رقم الموبايل</span><input id="fp" class="in" dir="ltr" inputmode="tel" autocomplete="tel" placeholder="01012345678" value="${E(M.fp)}" oninput="fm()"><small>11 رقم يبدأ بـ 01</small></label>
@@ -102,11 +115,14 @@ const ln=(l,x,k,me)=>`<div class="row3"><span class="rk ${me?'on':''}">${k?N(k):
 return`<div class="scr">${hd()}${p==1?'<div class="al ok">دورك الآن — توجّه للمشرف واستلم أوردرك</div>':p<=3?`<div class="al">استعد للاستلام — قبلك ${N(p-1)} ${p==2?'طيار':'طيارين'}</div>`:''}${mv?`<div class="al er">المشرف رحّل دورك إلى رقم ${N(p)}</div>`:''}
 <div class="hero"><div class="sc">دورك رقم</div><div class="huge">${N(p)}</div><div class="sc">من ${N(n)} في الانتظار</div></div>
 <div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
-const sync=()=>{const p=pos();if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
+const sync=()=>{const p=pos();if(p)M.call=null;if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
 const book=async()=>{if(!inside()||pos()||!LOC)return;try{const{data,error}=await sb.rpc('book',{p_token:M.tok,p_lat:LOC.lat,p_lng:LOC.lng});if(error||!data||data.err)throw data&&data.err||1;S=data;M.mod=1;M.note='';M.err='';M.moved=0;sync()}catch(e){M.err=e=='outside'?'أنت خارج موقع الاستلام':'تعذر الحجز، حاول مرة أخرى';sm();render()}};
-const ST=async f=>{if(!M.tok)return;try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();sync()}catch(e){}};
-function render(){document.getElementById('app').innerHTML=!M.me?reg():pos()?queue():home()}
-sb.channel('teko').on('broadcast',{event:'q'},()=>ST()).subscribe();setInterval(()=>ST(),4000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ST()});
+const ST=async f=>{if(!M.tok){LASTOK=Date.now();return}try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;LASTOK=Date.now();if(OFF){OFF=false;render()}if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();const bc=data.bc;if(bc&&M.me&&bc.id!==M.bc){if(data.pos>0)M.bc=bc.id;else if(inside()){M.bc=bc.id;M.call=bc.text;beep();notify('نداء من المشرف',bc.text)}}sync()}catch(e){}};
+let LASTOK=Date.now(),OFF=false;setInterval(()=>{const o=Date.now()-LASTOK>12000;if(o!=OFF){OFF=o;render()}},3000);
+const callGo=()=>{M.call=null;sm();book()},callX=()=>{M.call=null;sm();render()};
+const callM=()=>M.call?`<div class="cl"><div class="cd"><div class="ib">${ic('bell',34)}</div><div class="sc sm">نداء من المشرف</div><h2>${E(M.call)}</h2>${pos()?'':'<button class="btn" onclick="callGo()">احجز الآن</button>'}<button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="callX()">إغلاق</button></div></div>`:'';
+function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM()}
+sb.channel('teko').on('broadcast',{event:'q'},()=>ST()).subscribe();setInterval(()=>ST(),5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ST()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 render();ST();
 </script></body></html>
