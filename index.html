@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#00A8E1">
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><title>Teko</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Amiri:wght@700&display=swap">
 <style>
 :root{--bg:#F3F9FD;--card:#fff;--tx:#1F2733;--sc:#667085;--bd:#E4E7EC;--sf:#F4F5F7;--y:#00A8E1;--ony:#062A40;--dk:#1C243B;--bl:#3E8FD6;--blb:#E3F0FB;--ok:#1E7A4A;--okb:#E3F4EA;--er:#D92D3A;--wn:#FFF1CC;--wnt:#8A5A00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151C;--card:#1A1F29;--tx:#EEF0F3;--sc:#98A2B3;--bd:#2A303A;--sf:#1F242D;--dk:#2C3446;--bl:#6DB3F2;--blb:#1B2B3D;--ok:#5CD38F;--okb:#153524;--er:#F97066;--wn:#3A2F12;--wnt:#F6BC2F}}
@@ -60,6 +60,21 @@ body{height:100%}#dv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;just
 .cl .ib{width:72px;height:72px;border-radius:50%;background:var(--y);color:var(--ony);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:cp .7s ease-in-out 5}
 .cl h2{font-size:24px;line-height:1.6;margin:6px 0 22px}
 @keyframes cp{50%{transform:scale(1.15)}}
+.cert{margin-top:16px;padding:6px;border-radius:22px;background:linear-gradient(160deg,#1C243B,#2a3656)}
+.cert .in{border:1px solid rgba(255,255,255,.35);border-radius:16px;padding:22px 14px 16px;text-align:center;color:#fff;background:radial-gradient(120% 80% at 50% 0%,rgba(0,168,225,.25),transparent 62%)}
+.cert .tt{font-family:Amiri,'IBM Plex Sans Arabic',serif;font-size:32px;font-weight:700;line-height:1.3}
+.cert .ln{display:flex;align-items:center;gap:10px;margin:6px 0;color:#7fd3f0;font-size:13px}.cert .ln:before,.cert .ln:after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#7fd3f0,transparent)}
+.cert .sb{font-size:13px;opacity:.88;line-height:1.8}
+.cert .tabs{display:inline-flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px;margin:12px 0 4px}
+.cert .tabs button{border:0;background:transparent;color:#fff;padding:6px 18px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer}.cert .tabs .on{background:#00A8E1;color:#062A40;font-weight:600}
+.cert .hr{display:flex;align-items:center;gap:12px;padding:12px;margin-top:8px;border-radius:12px;background:rgba(255,255,255,.08);text-align:start;border:1px solid transparent}.cert .hr.me{border-color:#00A8E1;background:rgba(0,168,225,.18)}
+.cert .md{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1C243B;flex:none}
+.cert .g1{background:linear-gradient(145deg,#F3D47A,#C9A227)}.cert .g2{background:linear-gradient(145deg,#EEF2F6,#9AA5B1)}.cert .g3{background:linear-gradient(145deg,#E8BE97,#B87333)}
+.cert .nm{flex:1;font-weight:600;font-size:16px;line-height:1.5}
+.cert .ct{font-size:12px;opacity:.9;text-align:center;line-height:1.3}.cert .ct b{display:block;font-size:20px}
+.cert .em{padding:18px 8px;font-size:14px;opacity:.9;line-height:1.8}
+.cert .mn{margin-top:12px;font-size:12.5px;background:rgba(0,168,225,.2);border-radius:10px;padding:8px 10px;line-height:1.7}
+.cert .ft{margin-top:12px;font-size:12px;opacity:.8}
 </style></head><body>
 <div id="app" class="app"></div>
 <script src="config.js"></script>
@@ -109,13 +124,13 @@ const reg=()=>`<div class="scr rg"><div class="lg"><span class="lb"><img src="lo
 const hd=()=>`<div class="r" style="margin-bottom:4px"><span class="sq" style="width:44px;height:44px;font-size:18px;border-radius:50%">${E(M.me.name[0])}</span><div><div class="b">أهلاً ${E(M.me.name.split(' ')[0])}</div><div class="sc sm lv">مباشر</div></div></div>`;
 const home=()=>`<div class="scr">${hd()}${M.note?`<div class="al ok r" style="justify-content:space-between"><span>${E(M.note)}</span><button onclick="M.note='';sm();render()" style="background:none;border:0;cursor:pointer;font-size:18px" aria-label="إخفاء">✕</button></div>`:''}
 ${M.err?`<div class="al er">${E(M.err)}</div>`:''}<div class="card r" style="border-color:${inside()?'var(--ok)':'var(--y)'}"><span style="color:${inside()?'var(--ok)':'var(--wnt)'}">${ic('pin',28)}</span><div><div class="b">${inside()?'أنت داخل موقع الاستلام':'أنت خارج موقع الاستلام'}</div><div class="sc sm">${inside()?'تقدر تحجز دورك دلوقتي':'اقترب من الموقع عشان يشتغل الحجز'}</div></div></div>
-<div class="sc sm" style="text-align:center;margin:28px 0 12px">${N(S.tot)} طيار في الانتظار دلوقتي</div><button class="btn" style="height:72px;font-size:22px" ${inside()?'':'disabled'} onclick="book()">احجز الآن</button>${batCard()}${ad()}</div>`;
+<div class="sc sm" style="text-align:center;margin:28px 0 12px">${N(S.tot)} طيار في الانتظار دلوقتي</div><button class="btn" style="height:72px;font-size:22px" ${inside()?'':'disabled'} onclick="book()">احجز الآن</button>${honor()}${batCard()}${ad()}</div>`;
 const queue=()=>{const p=pos(),n=S.tot,pv=S.pv?{name:S.pv}:null,nx=S.nx?{name:S.nx}:null,mv=M.moved&&M.moved==p;if(p<=3&&M.al!=p){M.al=p;sm();setTimeout(()=>{beep();notify('استعد للاستلام',p==1?'دورك الآن':'قبلك '+(p-1))},60)}
 const ln=(l,x,k,me)=>`<div class="row3"><span class="rk ${me?'on':''}">${k?N(k):'—'}</span><div style="flex:1"><div class="sc sm">${l}</div><div class="${me?'b':''}">${x?E(x.name):'—'}</div></div>${me?'<span class="pill">أنت</span>':''}</div>`;
 return`<div class="scr">${hd()}${p==1?'<div class="al ok">دورك الآن — توجّه للمشرف واستلم أوردرك</div>':p<=3?`<div class="al">استعد للاستلام — قبلك ${N(p-1)} ${p==2?'طيار':'طيارين'}</div>`:''}${mv?`<div class="al er">المشرف رحّل دورك إلى رقم ${N(p)}</div>`:''}
 <div class="hero"><div class="sc">دورك رقم</div><div class="huge">${N(p)}</div><div class="sc">من ${N(n)} في الانتظار</div></div>
-<div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${batCard()}${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
-const sync=()=>{const p=pos();if(p)M.call=null;if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
+<div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${honor()}${batCard()}${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
+const sync=()=>{const p=pos();if(p)M.call=null;if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0;loadHonor()}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
 const book=async()=>{if(!inside()||pos()||!LOC)return;try{const{data,error}=await sb.rpc('book',{p_token:M.tok,p_lat:LOC.lat,p_lng:LOC.lng});if(error||!data||data.err)throw data&&data.err||1;S=data;M.mod=1;M.note='';M.err='';M.moved=0;sync()}catch(e){M.err=e=='outside'?'أنت خارج موقع الاستلام':'تعذر الحجز، حاول مرة أخرى';sm();render()}};
 const ST=async f=>{if(!M.tok){LASTOK=Date.now();return}try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;LASTOK=Date.now();if(OFF){OFF=false;render()}if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();const bc=data.bc;if(bc&&M.me&&bc.id!==M.bc){if(data.pos>0)M.bc=bc.id;else if(inside()){M.bc=bc.id;M.call=bc.text;beep();notify('نداء من المشرف',bc.text)}}sync()}catch(e){}};
 let LASTOK=Date.now(),OFF=false;setInterval(()=>{const o=Date.now()-LASTOK>12000;if(o!=OFF){OFF=o;render()}},3000);
@@ -127,6 +142,14 @@ return`<div class="card" style="margin-top:12px;padding:16px;border:1.5px solid 
 const batTest=async()=>{M.bs='wait';M.bn='';sm();render();try{const{data,error}=await sb.rpc('test_push',{p_token:M.tok});if(error||!data)throw 0;M.bn=data;M.ba=Date.now();sm();setTimeout(batCheck,15000)}catch(e){M.bs='fail';sm();render()}};
 const batCheck=async()=>{if(M.bs!='wait'||!M.bn||document.hidden)return;const el=Date.now()-M.ba;if(el<14000){setTimeout(batCheck,14500-el);return}try{const{data}=await sb.rpc('test_status',{p_token:M.tok,p_nonce:M.bn});if(data&&data.acked){if(data.vis)M.bs='vis';else{M.bat=1;M.bs='';M.note='تمام — الإشعارات شغالة والتطبيق مقفول ✔'}}else if(el>45000)M.bs='fail';else{setTimeout(batCheck,5000);return}}catch(e){M.bs='fail'}sm();render()};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)batCheck()});
+let H=null,HT='m',HS='';
+const loadHonor=async()=>{if(!M.tok)return;try{const{data,error}=await sb.rpc('get_honor',{p_token:M.tok});if(error||!data||data.err)return;const g=JSON.stringify(data);if(g==HS)return;HS=g;H=data;render()}catch(e){}};
+const htab=t=>{HT=t;render()};
+const honor=()=>{if(!H||!M.tok)return'';const L=(HT=='d'?H.day:H.month)||[],me=H.me||{},per=HT=='d'?'اليوم':'الشهر',mn=HT=='d'?me.d:me.m;
+const rows=L.length?L.map(x=>`<div class="hr ${x.me?'me':''}"><span class="md g${Math.min(x.r,3)}">${N(x.r)}</span><span class="nm">${E(x.name)}</span><span class="ct"><b>${N(x.n)}</b>استلام ناجح</span></div>`).join(''):`<div class="em">لسه مفيش أبطال ${per==='اليوم'?'النهارده':'الشهر ده'} — كن أول المتصدرين</div>`;
+const mine=mn>0?`<div class="mn">رصيدك ${per==='اليوم'?'النهارده':'هذا الشهر'}: ${N(mn)} استلام ناجح${HT=='m'&&me.rm?` · ترتيبك ${N(me.rm)}`:''}</div>`:'';
+return`<div class="cert"><div class="in"><div class="tt">شهادة تقدير</div><div class="ln">✦</div><div class="sb">تقديراً للالتزام بالدور والانضباط في الاستلام</div><div class="tabs"><button class="${HT=='m'?'on':''}" onclick="htab('m')">الشهر</button><button class="${HT=='d'?'on':''}" onclick="htab('d')">اليوم</button></div>${rows}${mine}<div class="ft">شكراً لكل طيار ملتزم</div></div></div>`};
+setInterval(()=>{if(!document.hidden)loadHonor()},120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadHonor()});
 const callGo=()=>{M.call=null;sm();book()},callX=()=>{M.call=null;sm();render()};
 const callM=()=>M.call?`<div class="cl"><div class="cd"><div class="ib">${ic('bell',34)}</div><div class="sc sm">نداء من المشرف</div><h2>${E(M.call)}</h2>${pos()?'':'<button class="btn" onclick="callGo()">احجز الآن</button>'}<button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="callX()">إغلاق</button></div></div>`:'';
 function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM()}
@@ -137,5 +160,5 @@ let LT=0;window.onLoc=()=>{const n=Date.now();if(!M.tok||!LOC||n-LT<30000)return
 setInterval(()=>{if(!document.hidden)onLoc()},45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pushSub()});
 sb.channel('teko').on('broadcast',{event:'q'},()=>ST()).subscribe();setInterval(()=>ST(),5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ST()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-render();ST();pushSub();
+render();ST();pushSub();loadHonor();
 </script></body></html>
