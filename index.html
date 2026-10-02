@@ -75,6 +75,32 @@ body{height:100%}#dv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;just
 .cert .em{padding:18px 8px;font-size:14px;opacity:.9;line-height:1.8}
 .cert .mn{margin-top:12px;font-size:12.5px;background:rgba(0,168,225,.2);border-radius:10px;padding:8px 10px;line-height:1.7}
 .cert .ft{margin-top:12px;font-size:12px;opacity:.8}
+
+/* ===== reels ===== */
+.rb{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:14px;border:1.5px solid var(--y);background:var(--card);border-radius:16px;cursor:pointer;text-align:start}
+.rbi{width:44px;height:44px;border-radius:12px;background:var(--y);color:var(--ony);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+#rl{position:fixed;inset:0;z-index:40;display:none;max-width:480px;margin:0 auto;background:#000;color:#fff;overflow:hidden}
+#rl .rf{position:absolute;inset:0;overflow-y:scroll;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#rl .rf::-webkit-scrollbar{display:none}
+#rl .rv{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;background:#0b0f16 center/cover no-repeat;overflow:hidden}
+#rl .rv:before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35)}
+#rl .rp{position:absolute;inset:0;z-index:1}
+#rl .rp iframe{width:100%;height:100%;border:0;display:block;background:#000;pointer-events:none}
+#rl .rtap{position:absolute;inset:0;z-index:2}
+#rl .rpl{position:absolute;inset:0;z-index:3;display:none;align-items:center;justify-content:center;font-size:64px;text-shadow:0 2px 12px #0008;pointer-events:none}
+#rl .rv[data-p="1"] .rpl{display:flex}
+#rl .rm{position:absolute;inset-inline:0;bottom:0;z-index:3;padding:60px 16px calc(env(safe-area-inset-bottom,0px) + 22px);background:linear-gradient(transparent,rgba(0,0,0,.7));pointer-events:none}
+#rl .rtt{font-weight:600;font-size:16px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#rl .rch{font-size:13px;opacity:.85;margin-top:4px}
+#rl .rt{position:absolute;top:0;inset-inline:0;z-index:6;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 28px;background:linear-gradient(rgba(0,0,0,.65),transparent)}
+#rl .rx{width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.4);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+#rl .rs{flex:1;text-align:center;font-size:14px;font-weight:600;padding:8px 12px;border-radius:999px;background:rgba(0,0,0,.45)}
+#rl .rs.hot{background:#F6BC2F;color:#1C243B}
+#rl .rbn{position:absolute;inset:0;z-index:7;background:rgba(6,24,40,.8);align-items:center;justify-content:center;padding:24px}
+#rl .rcd{width:100%;max-width:380px;background:var(--card);color:var(--tx);border-radius:24px;padding:26px 22px;text-align:center}
+#rl .rcd h2{font-size:24px;line-height:1.6;margin:6px 0 4px}
+#rl .rib{width:72px;height:72px;border-radius:50%;background:var(--y);color:var(--ony);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+#rl .rem{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;line-height:1.8}
 </style></head><body>
 <div id="app" class="app"></div>
 <script src="config.js"></script>
@@ -124,12 +150,12 @@ const reg=()=>`<div class="scr rg"><div class="lg"><span class="lb"><img src="lo
 const hd=()=>`<div class="r" style="margin-bottom:4px"><span class="sq" style="width:44px;height:44px;font-size:18px;border-radius:50%">${E(M.me.name[0])}</span><div><div class="b">أهلاً ${E(M.me.name.split(' ')[0])}</div><div class="sc sm lv">مباشر</div></div></div>`;
 const home=()=>`<div class="scr">${hd()}${M.note?`<div class="al ok r" style="justify-content:space-between"><span>${E(M.note)}</span><button onclick="M.note='';sm();render()" style="background:none;border:0;cursor:pointer;font-size:18px" aria-label="إخفاء">✕</button></div>`:''}
 ${M.err?`<div class="al er">${E(M.err)}</div>`:''}<div class="card r" style="border-color:${inside()?'var(--ok)':'var(--y)'}"><span style="color:${inside()?'var(--ok)':'var(--wnt)'}">${ic('pin',28)}</span><div><div class="b">${inside()?'أنت داخل موقع الاستلام':'أنت خارج موقع الاستلام'}</div><div class="sc sm">${inside()?'تقدر تحجز دورك دلوقتي':'اقترب من الموقع عشان يشتغل الحجز'}</div></div></div>
-<div class="sc sm" style="text-align:center;margin:28px 0 12px">${N(S.tot)} طيار في الانتظار دلوقتي</div><button class="btn" style="height:72px;font-size:22px" ${inside()?'':'disabled'} onclick="book()">احجز الآن</button>${honor()}${batCard()}${ad()}</div>`;
+<div class="sc sm" style="text-align:center;margin:28px 0 12px">${N(S.tot)} طيار في الانتظار دلوقتي</div><button class="btn" style="height:72px;font-size:22px" ${inside()?'':'disabled'} onclick="book()">احجز الآن</button>${reelBtn()}${honor()}${batCard()}${ad()}</div>`;
 const queue=()=>{const p=pos(),n=S.tot,pv=S.pv?{name:S.pv}:null,nx=S.nx?{name:S.nx}:null,mv=M.moved&&M.moved==p;if(p<=3&&M.al!=p){M.al=p;sm();setTimeout(()=>{beep();notify('استعد للاستلام',p==1?'دورك الآن':'قبلك '+(p-1))},60)}
 const ln=(l,x,k,me)=>`<div class="row3"><span class="rk ${me?'on':''}">${k?N(k):'—'}</span><div style="flex:1"><div class="sc sm">${l}</div><div class="${me?'b':''}">${x?E(x.name):'—'}</div></div>${me?'<span class="pill">أنت</span>':''}</div>`;
 return`<div class="scr">${hd()}${p==1?'<div class="al ok">دورك الآن — توجّه للمشرف واستلم أوردرك</div>':p<=3?`<div class="al">استعد للاستلام — قبلك ${N(p-1)} ${p==2?'طيار':'طيارين'}</div>`:''}${mv?`<div class="al er">المشرف رحّل دورك إلى رقم ${N(p)}</div>`:''}
 <div class="hero"><div class="sc">دورك رقم</div><div class="huge">${N(p)}</div><div class="sc">من ${N(n)} في الانتظار</div></div>
-<div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${honor()}${batCard()}${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
+<div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${reelBtn()}${honor()}${batCard()}${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
 const sync=()=>{const p=pos();if(p)M.call=null;if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0;loadHonor()}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
 const book=async()=>{if(!inside()||pos()||!LOC)return;try{const{data,error}=await sb.rpc('book',{p_token:M.tok,p_lat:LOC.lat,p_lng:LOC.lng});if(error||!data||data.err)throw data&&data.err||1;S=data;M.mod=1;M.note='';M.err='';M.moved=0;sync()}catch(e){M.err=e=='outside'?'أنت خارج موقع الاستلام':'تعذر الحجز، حاول مرة أخرى';sm();render()}};
 const ST=async f=>{if(!M.tok){LASTOK=Date.now();return}try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;LASTOK=Date.now();if(OFF){OFF=false;render()}if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();const bc=data.bc;if(bc&&M.me&&bc.id!==M.bc){if(data.pos>0)M.bc=bc.id;else if(inside()){M.bc=bc.id;M.call=bc.text;beep();notify('نداء من المشرف',bc.text)}}sync()}catch(e){}};
@@ -152,7 +178,7 @@ return`<div class="cert"><div class="in"><div class="tt">شهادة تقدير</
 setInterval(()=>{if(!document.hidden)loadHonor()},120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadHonor()});
 const callGo=()=>{M.call=null;sm();book()},callX=()=>{M.call=null;sm();render()};
 const callM=()=>M.call?`<div class="cl"><div class="cd"><div class="ib">${ic('bell',34)}</div><div class="sc sm">نداء من المشرف</div><h2>${E(M.call)}</h2>${pos()?'':'<button class="btn" onclick="callGo()">احجز الآن</button>'}<button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="callX()">إغلاق</button></div></div>`:'';
-function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM()}
+function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM();rlUpd()}
 const VAPID='BOEWFSkEt7LTXatldWh9uXocWcSW43YK79QJX5v_6vR2M7lqZvbPI4_A0fFsxl3DRlbsZtTWBcb2LrQ7Dpqsdg4';
 const b64=s=>{const r=(s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'),a=atob(r),u=new Uint8Array(a.length);for(let i=0;i<a.length;i++)u[i]=a.charCodeAt(i);return u};
 const pushSub=async()=>{try{if(!M.tok||!('serviceWorker' in navigator)||!('PushManager' in window)||!window.Notification||Notification.permission!='granted')return;const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(VAPID)});const j=sub.toJSON(),sig=j.endpoint+M.tok+new Date().toISOString().slice(0,10);if(M.ps===sig)return;const{error}=await sb.rpc('save_push',{p_token:M.tok,p_key:null,p_sub:j});if(!error){M.ps=sig;sm()}}catch(e){}};
@@ -160,5 +186,85 @@ let LT=0;window.onLoc=()=>{const n=Date.now();if(!M.tok||!LOC||n-LT<30000)return
 setInterval(()=>{if(!document.hidden)onLoc()},45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pushSub()});
 sb.channel('teko').on('broadcast',{event:'q'},()=>ST()).subscribe();setInterval(()=>ST(),5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ST()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+/* ===== الريلز: ترفيه أثناء الانتظار (فيديوهات يوتيوب القصيرة من جدول reels) ===== */
+var RL={open:0,seed:'',off:0,busy:0,n:0,vis:null,cur:null,t:0,muted:1,ack:0,hold:0,pp:0,io:null};
+const RLI={x:'<path d="M18 6L6 18M6 6l12 12"/>',on:'<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',off:'<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/>'};
+const rli=(k,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${RLI[k]}</svg>`;
+const reelBtn=()=>pos()==1?'':`<button class="rb" onclick="rlOpen()"><span class="rbi">▶</span><span style="flex:1"><div class="b">ترفيه أثناء الانتظار</div><div class="sc sm">فيديوهات قصيرة لحد ما دورك يجي</div></span>${ic('chev',18)}</button>`;
+const rlPost=(f,fn)=>{try{f&&f.contentWindow&&f.contentWindow.postMessage(JSON.stringify({event:'command',func:fn,args:''}),'*')}catch(e){}};
+const rlSeed=()=>Math.random().toString(36).slice(2,8);
+function rlThumb(s){if(s&&s.dataset&&s.dataset.id&&!s.style.backgroundImage)s.style.backgroundImage='url(https://i.ytimg.com/vi/'+s.dataset.id+'/hqdefault.jpg)'}
+function rlStop(s){if(!s)return;clearTimeout(RL.t);const p=s.querySelector('.rp');if(p)p.innerHTML='';s.dataset.p='';if(RL.cur===s)RL.cur=null}
+function rlMount(s){
+ if(!RL.open||RL.hold||document.hidden||!s||RL.vis!==s)return;
+ const p=s.querySelector('.rp');if(RL.cur===s&&p.firstChild)return;
+ if(RL.cur&&RL.cur!==s)rlStop(RL.cur);
+ const id=s.dataset.id;RL.cur=s;s.dataset.p='';
+ const f=document.createElement('iframe');
+ f.title='فيديو';f.allow='autoplay; encrypted-media';f.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+ f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+id+'&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1&origin='+encodeURIComponent(location.origin);
+ f.onload=()=>{if(!RL.muted){setTimeout(()=>rlPost(f,'unMute'),500);setTimeout(()=>rlPost(f,'unMute'),1500)}};
+ p.innerHTML='';p.appendChild(f)}
+function rlSchedule(s){RL.vis=s;clearTimeout(RL.t);RL.t=setTimeout(()=>rlMount(s),250)}
+function rlObs(es){es.forEach(e=>{const s=e.target;
+ if(e.isIntersecting&&e.intersectionRatio>=.7){rlThumb(s);rlThumb(s.nextElementSibling);rlSchedule(s);if(+s.dataset.i>=RL.n-3)rlMore()}
+ else if(e.intersectionRatio<.3){if(RL.vis===s)RL.vis=null;if(RL.cur===s)rlStop(s)}})}
+function rlTap(s){const f=s.querySelector('iframe');if(!f)return;const pz=s.dataset.p=='1';rlPost(f,pz?'playVideo':'pauseVideo');s.dataset.p=pz?'':'1'}
+function rlSnd(){const b=document.getElementById('rsn');if(b)b.innerHTML=rli(RL.muted?'off':'on')}
+function rlSound(){RL.muted=RL.muted?0:1;rlPost(RL.cur&&RL.cur.querySelector('iframe'),RL.muted?'mute':'unMute');rlSnd()}
+function rlMsg(t,r){const f=document.getElementById('rlf');if(!f)return;let m=document.getElementById('rem');if(!m){m=document.createElement('div');m.id='rem';m.className='rem';f.appendChild(m)}m.innerHTML='<div>'+E(t)+'</div>'+(r?'<button class="btn" style="margin-top:16px;height:48px;max-width:260px" onclick="rlRetry()">إعادة المحاولة</button>':'')}
+function rlRetry(){RL.off=0;rlMsg('جاري التحميل...');rlMore()}
+function rlSlide(v,i){const s=document.createElement('section');s.className='rv';s.dataset.id=String(v.video_id).replace(/[^\w-]/g,'');s.dataset.i=i;
+ s.innerHTML='<div class="rp"></div><div class="rtap"></div><div class="rpl">▶</div><div class="rm"><div class="rtt">'+E(v.title||'')+'</div><div class="rch">'+E(v.channel_title||'')+'</div></div>';
+ s.querySelector('.rtap').onclick=()=>rlTap(s);if(i<2)rlThumb(s);return s}
+async function rlMore(again){
+ if(RL.busy||!RL.open)return;RL.busy=1;
+ try{
+  const{data,error}=await sb.rpc('get_reels',{p_seed:RL.seed,p_offset:RL.off,p_limit:8});
+  if(error)throw error;
+  if(!RL.open){RL.busy=0;return}
+  const rows=data||[];
+  if(!rows.length){RL.busy=0;
+   if(RL.off>0&&!again){RL.seed=rlSeed();RL.off=0;return rlMore(1)}
+   if(!RL.n)rlMsg('مفيش فيديوهات متاحة دلوقتي، جرّب بعد شوية',1);return}
+  RL.off+=rows.length;
+  const f=document.getElementById('rlf');if(!f){RL.busy=0;return}
+  const m=document.getElementById('rem');if(m)m.remove();
+  rows.forEach(v=>{const s=rlSlide(v,RL.n++);f.appendChild(s);RL.io.observe(s)});
+ }catch(e){if(!RL.n)rlMsg('تعذر تحميل الفيديوهات — تأكد من الاتصال',1)}
+ RL.busy=0}
+function rlOpen(){
+ if(RL.open||!M.me||pos()==1)return;
+ RL.open=1;RL.seed=rlSeed();RL.off=0;RL.n=0;RL.cur=null;RL.vis=null;RL.hold=0;RL.ack=0;RL.pp=pos();
+ let el=document.getElementById('rl');if(!el){el=document.createElement('div');el.id='rl';document.body.appendChild(el)}
+ el.innerHTML='<div class="rf" id="rlf"></div><div class="rt"><button class="rx" onclick="rlClose()" aria-label="رجوع">'+rli('x')+'</button><div id="rst" class="rs"></div><button class="rx" id="rsn" onclick="rlSound()" aria-label="الصوت"></button></div><div id="rbn" class="rbn" style="display:none"></div>';
+ el.style.display='block';rlSnd();
+ RL.io=new IntersectionObserver(rlObs,{root:document.getElementById('rlf'),threshold:[0,.3,.7,1]});
+ try{history.pushState({rl:1},'')}catch(e){}
+ rlMsg('جاري التحميل...');rlUpd();rlMore()}
+function rlClose(pop){
+ if(!RL.open)return;RL.open=0;clearTimeout(RL.t);
+ try{RL.io&&RL.io.disconnect()}catch(e){}
+ RL.io=null;RL.cur=null;RL.vis=null;RL.hold=0;
+ const el=document.getElementById('rl');if(el){el.style.display='none';el.innerHTML=''}
+ if(!pop&&history.state&&history.state.rl){try{history.back()}catch(e){}}}
+function rlUpd(){
+ if(typeof RL=='undefined')return;
+ const p=pos(),n=S.tot||0;
+ if(RL.open){
+  if(!M.me||p==1||(RL.pp>0&&!p)){RL.pp=p;rlClose();return}
+  const st=document.getElementById('rst');
+  if(st){st.className='rs'+(p&&p<=3?' hot':'');st.textContent=p?'دورك رقم '+N(p)+' من '+N(n):'لسه ما حجزتش دورك'}
+  if(RL.ack&&!(p>1&&p<=3))RL.ack=0;
+  const alertOn=p>1&&p<=3&&RL.ack!==p,hold=alertOn||!!M.call||document.hidden;
+  const bn=document.getElementById('rbn');
+  if(bn){if(alertOn){const h=`<div class="rcd"><div class="rib">${ic('bell',34)}</div><h2>استعد للاستلام</h2><div class="sc">قبلك ${N(p-1)} ${p==2?'طيار':'طيارين'}</div><button class="btn" style="margin-top:20px" onclick="rlClose()">رجوع للطابور</button><button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="RL.ack=${p};rlUpd()">كمّل مشاهدة</button></div>`;
+    if(bn.dataset.h!==h){bn.innerHTML=h;bn.dataset.h=h}bn.style.display='flex'}else{bn.style.display='none';bn.dataset.h=''}}
+  if(hold!=RL.hold){RL.hold=hold;if(hold)rlStop(RL.cur);else if(RL.vis)rlSchedule(RL.vis)}
+ }
+ RL.pp=p}
+addEventListener('popstate',()=>{if(RL.open)rlClose(1)});
+document.addEventListener('visibilitychange',()=>rlUpd());
 render();ST();pushSub();loadHonor();
 </script></body></html>
