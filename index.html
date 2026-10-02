@@ -79,7 +79,7 @@ const notify=async(t,b)=>{try{if(!window.Notification||Notification.permission!=
 const dist=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742e3*Math.asin(Math.sqrt(h))};
 let GPS=0,LOC=null,LSIG='';
 const chk=()=>{const c=CF();const i=!!(LOC&&c&&dist(LOC.lat,LOC.lng,c.lat,c.lng)<=c.r);if(i!=GPS){GPS=i;return 1}return 0};
-const wg=()=>{try{navigator.geolocation.watchPosition(p=>{LOC={lat:p.coords.latitude,lng:p.coords.longitude};if(chk()){render();ST(1)}},()=>{},{enableHighAccuracy:true})}catch(e){}};
+const wg=()=>{try{navigator.geolocation.watchPosition(p=>{LOC={lat:p.coords.latitude,lng:p.coords.longitude};if(chk()){render();ST(1)}if(window.onLoc)onLoc()},()=>{},{enableHighAccuracy:true})}catch(e){}};
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'#';
 setInterval(()=>{const a=AD_();if(a&&Date.now()>a.end&&document.querySelector('.ad'))render()},1000);
 document.addEventListener('contextmenu',e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName))e.preventDefault()});
@@ -92,13 +92,13 @@ const cb=()=>{const b=document.getElementById('go');if(b)b.disabled=!okf()};
 const fm=()=>{M.fn=document.getElementById('fn').value;M.fp=document.getElementById('fp').value;sm();cb()};
 const inApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const pm=async k=>{let ok=0,dn=k;M.deny='';try{if(k=='l'){const r=await new Promise(res=>navigator.geolocation.getCurrentPosition(()=>res(0),e=>res(e.code),{timeout:20000,maximumAge:60000}));ok=r===0;if(ok)wg();else if(r!==1)dn='l2'}else if(k=='n'){if(!window.Notification)dn='n2';else ok=(await Notification.requestPermission())=='granted'}else if(inApp())ok=1;else if(DI){DI.prompt();ok=1}else dn=/iPhone|iPad|iPod/.test(navigator.userAgent)?'i2':'i'}catch(e){}
-if(ok)M.perm[k]=1;else M.deny=dn;sm();render()};
+if(ok)M.perm[k]=1;else M.deny=dn;sm();render();if(ok&&k=='n')pushSub()};
 const syncPerm=async()=>{let ch=0;try{if(navigator.permissions){const g=await navigator.permissions.query({name:'geolocation'});if(g.state=='granted'&&!M.perm.l){M.perm.l=1;wg();ch=1}}}catch(e){}
 if(window.Notification&&Notification.permission=='granted'&&!M.perm.n){M.perm.n=1;ch=1}
 if(inApp()&&!M.perm.i){M.perm.i=1;ch=1}
 if(ch){sm();render()}};
 syncPerm();document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncPerm()});
-const begin=async()=>{if(!okf())return;const nm=M.fn.trim().replace(/\s+/g,' '),ph=A2(M.fp);try{const{data,error}=await sb.rpc('register',{p_name:nm,p_phone:ph});if(error||!data)throw error||new Error('empty');M.tok=data;M.me={id:'me',name:nm,ph};M.deny='';sm();ST(1);render()}catch(e){M.deny='x';M.dm=String(e&&e.message||e).slice(0,140);sm();render()}};
+const begin=async()=>{if(!okf())return;const nm=M.fn.trim().replace(/\s+/g,' '),ph=A2(M.fp);try{const{data,error}=await sb.rpc('register',{p_name:nm,p_phone:ph});if(error||!data)throw error||new Error('empty');M.tok=data;M.me={id:'me',name:nm,ph};M.deny='';sm();ST(1);render();pushSub()}catch(e){M.deny='x';M.dm=String(e&&e.message||e).slice(0,140);sm();render()}};
 const pr=(k,t,d,req)=>`<button class="pm ${M.perm[k]?'on':''}" onclick="pm('${k}')"><span class="pi">${ic(k=='l'?'pin':k=='n'?'bell':'dl',22)}</span><span style="flex:1"><div class="b">${t}</div><div class="sc sm" style="margin-top:2px">${d}</div></span><span class="pill" style="${M.perm[k]?'':'background:var(--sf);color:var(--sc)'}">${M.perm[k]?'تم':req?'السماح':'اختياري'}</span></button>`;
 const DN={x:'تعذر التسجيل — تأكد من الاتصال وحاول مرة أخرى',l:'الموقع مرفوض — فعّله من إعدادات الموبايل ثم ارجع للتطبيق',n:'الإشعارات مرفوضة — فعّلها من إعدادات الموبايل ثم ارجع للتطبيق',i:'افتح الرابط من متصفح Chrome (مش من واتساب)، ثم اضغط ⋮ واختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»',i2:'افتح الرابط من Safari، اضغط زر المشاركة ثم «Add to Home Screen»',l2:'تعذر تحديد موقعك — شغّل الـ GPS وجرّب تاني',n2:'الإشعارات مش متاحة في المتصفح ده — ثبّت التطبيق على الشاشة الرئيسية وافتحه منها'};
 const reg=()=>`<div class="scr rg"><div class="lg"><span class="lb"><img src="logo.png" alt="Teko" onerror="this.replaceWith('Teko')"></span><h1>أهلاً بيك في Teko</h1><p class="sub">سجّل بياناتك مرة واحدة وابدأ حجز دورك</p></div>
@@ -122,7 +122,12 @@ let LASTOK=Date.now(),OFF=false;setInterval(()=>{const o=Date.now()-LASTOK>12000
 const callGo=()=>{M.call=null;sm();book()},callX=()=>{M.call=null;sm();render()};
 const callM=()=>M.call?`<div class="cl"><div class="cd"><div class="ib">${ic('bell',34)}</div><div class="sc sm">نداء من المشرف</div><h2>${E(M.call)}</h2>${pos()?'':'<button class="btn" onclick="callGo()">احجز الآن</button>'}<button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="callX()">إغلاق</button></div></div>`:'';
 function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM()}
+const VAPID='BOEWFSkEt7LTXatldWh9uXocWcSW43YK79QJX5v_6vR2M7lqZvbPI4_A0fFsxl3DRlbsZtTWBcb2LrQ7Dpqsdg4';
+const b64=s=>{const r=(s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'),a=atob(r),u=new Uint8Array(a.length);for(let i=0;i<a.length;i++)u[i]=a.charCodeAt(i);return u};
+const pushSub=async()=>{try{if(!M.tok||!('serviceWorker' in navigator)||!('PushManager' in window)||!window.Notification||Notification.permission!='granted')return;const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(VAPID)});const j=sub.toJSON(),sig=j.endpoint+M.tok+new Date().toISOString().slice(0,10);if(M.ps===sig)return;const{error}=await sb.rpc('save_push',{p_token:M.tok,p_key:null,p_sub:j});if(!error){M.ps=sig;sm()}}catch(e){}};
+let LT=0;window.onLoc=()=>{const n=Date.now();if(!M.tok||!LOC||n-LT<30000)return;LT=n;sb.rpc('touch',{p_token:M.tok,p_lat:LOC.lat,p_lng:LOC.lng}).then(()=>{},()=>{})};
+setInterval(()=>{if(!document.hidden)onLoc()},45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pushSub()});
 sb.channel('teko').on('broadcast',{event:'q'},()=>ST()).subscribe();setInterval(()=>ST(),5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ST()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-render();ST();
+render();ST();pushSub();
 </script></body></html>
