@@ -233,7 +233,7 @@ return`<div class="scr">${hd()}${p==1?'<div class="al ok">دورك الآن — 
 <div class="card" style="padding:4px 16px">${ln('قبلك',pv,p-1,0)}${ln('أنت',M.me,p,1)}${ln('بعدك',nx,nx?p+1:0,0)}</div>${batCard()}${ad()}</div>${M.mod?`<div class="md"><div><div class="sq" style="margin:0 auto 12px;background:var(--okb);color:var(--ok)">${ic('check',32)}</div><h1>تم حجز دورك</h1><div class="sc" style="margin:6px 0 20px">رقمك ${N(p)} في الانتظار</div><button class="btn" onclick="M.mod=0;sm();render()">موافق</button></div></div>`:''}`};
 const sync=()=>{const p=pos();if(p)M.call=null;if(M.in&&!p){M.note='تم تسجيل استلامك '+now();M.al=0;M.moved=0}else if(p&&M.lp&&p>M.lp)M.moved=p;M.in=p?1:0;M.lp=p;sm();render()};
 const book=async()=>{if(!inside()||pos()||!LOC)return;try{const{data,error}=await sb.rpc('book',{p_token:M.tok,p_lat:LOC.lat,p_lng:LOC.lng});if(error||!data||data.err)throw data&&data.err||1;S=data;M.mod=1;M.note='';M.err='';M.moved=0;sync()}catch(e){M.err=e=='outside'?'أنت خارج موقع الاستلام':'تعذر الحجز، حاول مرة أخرى';sm();render()}};
-const ST=async f=>{if(!M.tok){LASTOK=Date.now();return}try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;LASTOK=Date.now();if(OFF){OFF=false;render()}if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();const bc=data.bc;if(bc&&M.me&&bc.id!==M.bc){if(data.pos>0)M.bc=bc.id;else if(inside()){M.bc=bc.id;M.call=bc.text;beep();notify('نداء من المشرف',bc.text)}}sync()}catch(e){}};
+const ST=async f=>{if(!M.tok){LASTOK=Date.now();return}try{const{data,error}=await sb.rpc('get_state',{p_token:M.tok});if(error||!data)return;LASTOK=Date.now();if(OFF){OFF=false;render()}if(data.err){M.me=null;M.tok='';M.in=0;M.lp=0;sm();render();return}const g=JSON.stringify(data);if(g==LSIG&&!f)return;LSIG=g;S=data;chk();invSync();const bc=data.bc;if(bc&&M.me&&bc.id!==M.bc){if(data.pos>0)M.bc=bc.id;else if(inside()){M.bc=bc.id;M.call=bc.text;beep();notify('نداء من المشرف',bc.text)}}sync()}catch(e){}};
 let LASTOK=Date.now(),OFF=false;setInterval(()=>{const o=Date.now()-LASTOK>12000;if(o!=OFF){OFF=o;render()}},3000);
 const brand=()=>{const u=navigator.userAgent;if(/iPhone|iPad|iPod/.test(u))return'ios';if(/SM-|Samsung/i.test(u))return'sam';if(/Xiaomi|Redmi|POCO|MIUI|HyperOS/i.test(u))return'mi';if(/CPH|RMX|OPPO|Realme|OnePlus|PJ[A-Z]\d/i.test(u))return'op';if(/HUAWEI|HONOR|HMA-|ELS-|JSN-/i.test(u))return'hw';if(/Infinix|TECNO|itel/i.test(u))return'tc';return'and'};
 const BST={ios:'ثبّت التطبيق على الشاشة الرئيسية (Share ← Add to Home Screen) وافتحه من الأيقونة، وخلّي الإشعارات «سماح» من إعدادات الآيفون.',sam:'الإعدادات ← البطارية ← حدود استخدام الخلفية: شيل Chrome والتطبيق من «التطبيقات النائمة»، وفي إعدادات التطبيق ← البطارية اختار «غير مقيّد».',mi:'الإعدادات ← التطبيقات ← إدارة التطبيقات ← Chrome (أو Teko) ← توفير البطارية ← «بدون قيود»، وفعّل «التشغيل التلقائي».',op:'الإعدادات ← البطارية ← استخدام البطارية للتطبيق ← Chrome ← اسمح بالنشاط في الخلفية، وفعّل «التشغيل التلقائي».',hw:'الإعدادات ← البطارية ← إطلاق التطبيق ← Chrome ← إدارة يدوية ← فعّل التشغيل التلقائي والتشغيل في الخلفية.',tc:'الإعدادات ← إدارة البطارية أو الطاقة ← Chrome ← «بدون قيود»، وفعّل التشغيل التلقائي من مدير التطبيقات.',and:'الإعدادات ← التطبيقات ← Chrome (أو Teko) ← البطارية ← «غير مقيّد» أو «بدون قيود».'};
@@ -243,9 +243,15 @@ return`<div class="card" style="margin-top:12px;padding:16px;border:1.5px solid 
 const batTest=async()=>{M.bs='wait';M.bn='';sm();render();try{const{data,error}=await sb.rpc('test_push',{p_token:M.tok});if(error||!data)throw 0;M.bn=data;M.ba=Date.now();sm();setTimeout(batCheck,15000)}catch(e){M.bs='fail';sm();render()}};
 const batCheck=async()=>{if(M.bs!='wait'||!M.bn||document.hidden)return;const el=Date.now()-M.ba;if(el<14000){setTimeout(batCheck,14500-el);return}try{const{data}=await sb.rpc('test_status',{p_token:M.tok,p_nonce:M.bn});if(data&&data.acked){if(data.vis)M.bs='vis';else{M.bat=1;M.bs='';M.note='تمام — الإشعارات شغالة والتطبيق مقفول ✔'}}else if(el>45000)M.bs='fail';else{setTimeout(batCheck,5000);return}}catch(e){M.bs='fail'}sm();render()};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)batCheck()});
+const INVD={};let INV=null;
+const invSync=()=>{const x=(S.dinv||[]).find(i=>!INVD[i.id])||null;if((x&&x.id)!==(INV&&INV.id)){const nw=x&&!INV;INV=x;if(nw){try{beep();notify('دعوة دومينو',x.from+' بيدعوك تلعب دومينو')}catch(e){}}render()}};
+const invM=()=>INV?`<div class="cl"><div class="cd"><div class="ib">${ic('bell',34)}</div><div class="sc sm">دعوة دومينو</div><h2>${E(INV.from)} بيدعوك تلعب دومينو لحد ${N(INV.target)} نقطة</h2><button class="btn" onclick="invAcc(${INV.id})">قبول</button><button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="invDec(${INV.id})">رفض</button></div></div>`:'';
+async function invAcc(id){INVD[id]=1;INV=null;render();try{const st=await dmRpc('dm_invite_resp',{p_inv:id,p_accept:true});
+ if(st&&st.game&&st.game!==null){if(TAB=='dm'&&DM.open){DM.mode='lobby';DM.hall=1;pvStart();pvHandle(st)}else goTab('dm')}else alert('الدعوة انتهت أو الزميل بدأ مباراة تانية')}catch(e){alert('تعذر الاتصال — جرّب تاني')}}
+function invDec(id){INVD[id]=1;INV=null;render();dmRpc('dm_invite_resp',{p_inv:id,p_accept:false}).catch(()=>{})}
 const callGo=()=>{M.call=null;sm();book()},callX=()=>{M.call=null;sm();render()};
 const callM=()=>M.call?`<div class="cl"><div class="cd"><div class="ib">${ic('bell',34)}</div><div class="sc sm">نداء من المشرف</div><h2>${E(M.call)}</h2>${pos()?'':'<button class="btn" onclick="callGo()">احجز الآن</button>'}<button class="btn" style="background:var(--sf);color:var(--tx);margin-top:10px" onclick="callX()">إغلاق</button></div></div>`:'';
-function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM();tbRender();rlUpd();dmUpd()}
+function render(){document.getElementById('app').innerHTML=(OFF&&M.me?'<div class="off">الاتصال ضعيف — البيانات اللي قدامك ممكن تكون قديمة</div>':'')+(!M.me?reg():pos()?queue():home())+callM()+invM();tbRender();rlUpd();dmUpd()}
 const VAPID='BOEWFSkEt7LTXatldWh9uXocWcSW43YK79QJX5v_6vR2M7lqZvbPI4_A0fFsxl3DRlbsZtTWBcb2LrQ7Dpqsdg4';
 const b64=s=>{const r=(s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'),a=atob(r),u=new Uint8Array(a.length);for(let i=0;i<a.length;i++)u[i]=a.charCodeAt(i);return u};
 const pushSub=async()=>{try{if(!M.tok||!('serviceWorker' in navigator)||!('PushManager' in window)||!window.Notification||Notification.permission!='granted')return;const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(VAPID)});const j=sub.toJSON(),sig=j.endpoint+M.tok+new Date().toISOString().slice(0,10);if(M.ps===sig)return;const{error}=await sb.rpc('save_push',{p_token:M.tok,p_key:null,p_sub:j});if(!error){M.ps=sig;sm()}}catch(e){}};
@@ -361,7 +367,7 @@ function dPass(G,who){
  else G.turn=who=='me'?'cpu':'me'}
 
 function ldG(){const g=ld('teko-dmg',null);if(!g||!Array.isArray(g.me)||!Array.isArray(g.cpu)||!Array.isArray(g.chain)||!Array.isArray(g.stock))return null;g.lastTile=null;g.newTile=null;return g}
-var DM={open:0,hold:0,ack:0,pp:0,t:0,pick:-1,deal:0,anim:0,note:'',mode:'',menu:0,busy:0,drag:0,dp:null,pv:null,wins:0,lob:0,opp:'',moveAt:0,code:'',hall:0,tmo:0,pi:0,ch:null,chId:0,endId:0,noclick:0},DG=ldG(),PG=null;
+var DM={open:0,hold:0,ack:0,pp:0,t:0,pick:-1,deal:0,anim:0,note:'',mode:'',menu:0,busy:0,drag:0,dp:null,pv:null,wins:0,lob:0,opp:'',moveAt:0,code:'',hall:0,tmo:0,pi:0,ch:null,chId:0,endId:0,noclick:0,tgt:100,plist:null,hst:null,invSeen:0,tmo2:0},DG=ldG(),PG=null;
 let DS=ld('teko-dm',{me:0,cpu:0});
 var SND={on:ld('teko-snd',1)!==0};
 /* --- أصوات (مولّدة بالكود، من غير ملفات) --- */
@@ -394,7 +400,7 @@ async function dmRpc(fn,a){const{data,error}=await sb.rpc(fn,Object.assign({p_to
 /* حفظ لعبة الكمبيوتر على الجهاز: يكمّل منها بعد الخروج أو الريفريش */
 function dmSave(){if(DM.mode!='cpu'||!DG)return;try{localStorage.setItem('teko-dmg',JSON.stringify(DG,(k,v)=>k=='lastTile'||k=='newTile'?undefined:v))}catch(e){}}
 /* تحويل حالة السيرفر (طيار ضد طيار) لنفس شكل لعبة الكمبيوتر عشان نستخدم نفس الرسم */
-function dmMap(v){const ch=v.chain||[],l=v.last,G={me:v.my||[],cpu:Array.from({length:v.opp_n},()=>[0,0]),stock:Array.from({length:v.stock_n},()=>[0,0]),chain:ch,ends:v.ends||[null,null],turn:v.mine?'me':'cpu',passes:v.passes,first:v.fk,over:null,lastBy:v.last_by=='opp'?'cpu':v.last_by,lastTile:null,id:v.id,ver:v.ver};
+function dmMap(v){const ch=v.chain||[],l=v.last,G={me:v.my||[],cpu:Array.from({length:v.opp_n},()=>[0,0]),stock:Array.from({length:v.stock_n},()=>[0,0]),chain:ch,ends:v.ends||[null,null],turn:v.mine?'me':'cpu',passes:v.passes,first:v.fk,over:null,lastBy:v.last_by=='opp'?'cpu':v.last_by,lastTile:null,id:v.id,ver:v.ver,tg:v.target||100,sc:v.sc||{me:0,opp:0},rd:v.round||1,st:v.status||'active',rdy:!!v.rdy_me,rdyo:!!v.rdy_opp};
  if(v.over)G.over={who:v.over.who=='opp'?'cpu':v.over.who,pts:v.over.pts,why:v.over.why};
  if(l)G.lastTile=ch.find(o=>o[0]==l[0]&&o[1]==l[1])||null;return G}
 function dmOpen(){
@@ -413,21 +419,22 @@ async function dmBoot(){
  if(st&&st.game)dmEnterPvp(st.game);else if(DG&&!DG.over)dmGoCpu(0);else dmMenu(1)}
 function dmClose(){
  if(!DM.open)return;dmSave();DM.open=0;clearTimeout(DM.t);DM.hold=0;DM.menu=0;DM.drag=0;DM.dp=null;pvStop();
- if(DM.mode=='lobby')dmRpc('dm_cancel').catch(()=>{});DM.mode='';PG=null;
+ if(DM.mode=='lobby'){dmRpc('dm_cancel').catch(()=>{});dmRpc('dm_invite_cancel').catch(()=>{})}DM.mode='';PG=null;
  const el=dmEl('dm');if(el){el.style.display='none';el.innerHTML=''}}
 /* ---- القائمة ---- */
 function dmMenu(nf){
  if(!DM.open)return;DM.menu=1;clearTimeout(DM.t);
- const m=dmEl('dmenu'),pvLive=DM.mode=='pvp'&&PG&&!PG.over,cpuLive=DG&&!DG.over;
+ const m=dmEl('dmenu'),pvLive=DM.mode=='pvp'&&PG&&PG.st!='over',cpuLive=DG&&!DG.over;
  let h='<div class="rcd"><h2>دومينو</h2>';
- if(pvLive)h+='<div class="sc">مباراة شغالة ضد '+E(DM.opp||'طيار')+'</div><button class="btn" style="margin-top:20px" onclick="dmMenuClose()">كمّل المباراة</button><button class="btn" style="'+g2s+'" onclick="dmQuit()">انسحاب</button>';
- else h+='<div class="sc">'+(DM.wins?'كسبت '+N(DM.wins)+' مباراة ضد طيارين 🏆':'اختار تلعب ضد مين')+'</div>'
+ if(pvLive)h+='<div class="sc">مباراة شغالة ضد '+E(DM.opp||'زميل')+(PG.sc?' · '+N(PG.sc.me)+' - '+N(PG.sc.opp)+' من '+N(PG.tg):'')+'</div><button class="btn" style="margin-top:20px" onclick="dmMenuClose()">كمّل المباراة</button><button class="btn" style="'+g2s+'" onclick="dmQuit()">انسحاب</button>';
+ else h+='<div class="sc">'+(DM.wins?'كسبت '+N(DM.wins)+' مباراة ضد زملائك 🏆':'اختار تلعب ضد مين')+'</div>'
   +'<button class="btn" style="margin-top:20px" onclick="dmGoCpu(0)">'+(cpuLive?'كمّل ضد الكمبيوتر':'ضد الكمبيوتر')+'</button>'
-  +(cpuLive?'<button class="btn" style="'+g2s+'" onclick="dmGoCpu(1)">جولة جديدة ضد الكمبيوتر</button>':'')
-  +'<button class="btn" style="'+g2s+'" onclick="dmHall()">صالة اللعب</button>';
+  +(cpuLive?'<button class="btn" style="'+g2s+'" onclick="dmGoCpu(1)">مباراة جديدة ضد الكمبيوتر</button><button class="btn" style="'+g2s+'" onclick="dmCpuQuit()">انسحاب من المباراة</button>':'')
+  +'<button class="btn" style="'+g2s+'" onclick="dmHall()">العب مع زميل</button>';
  h+='<button class="btn" style="'+g2s+'" onclick="goTab(\'home\')">رجوع للرئيسية</button></div>';
  m.innerHTML=h;m.style.display='flex';
- if(!nf&&!pvLive)dmRpc('dm_state').then(st=>{if(st&&DM.menu&&!DM.mode&&(DM.lob!=st.lobby||DM.wins!=st.wins)){DM.lob=st.lobby;DM.wins=st.wins;dmMenu(1)}}).catch(()=>{})}
+ if(!nf&&!pvLive)dmRpc('dm_state').then(st=>{if(st&&DM.menu&&!DM.mode&&DM.wins!=st.wins){DM.wins=st.wins;dmMenu(1)}}).catch(()=>{})}
+function dmCpuQuit(){if(!confirm('تنسحب من المباراة؟'))return;DG=null;DS={me:0,cpu:0};sv('teko-dm',DS);try{localStorage.removeItem('teko-dmg')}catch(e){}dmMenu()}
 function dmMenuClose(){DM.menu=0;const m=dmEl('dmenu');if(m)m.style.display='none';dmResume()}
 function dmResume(){if(DM.mode=='cpu'&&DG){if(DG.turn=='cpu')dmCpuGo();else dmAuto()}else if(DM.mode=='pvp'){dmAuto();pvPoll()}}
 function dmGoCpu(fresh){
@@ -438,11 +445,22 @@ function dmGoCpu(fresh){
 /* ---- طيار ضد طيار ---- */
 function dmFriend(){const m=dmEl('dmenu');if(!m)return;
  m.innerHTML='<div class="rcd"><h2>العب مع زميل</h2><div class="sc" style="line-height:1.8">اتفقوا على رقم من ٤ أرقام (أي رقم)، واكتبوه إنتوا الاتنين</div><input id="dcode" class="in" dir="ltr" inputmode="numeric" maxlength="4" placeholder="0000" style="margin-top:16px;text-align:center;font-size:28px;letter-spacing:6px" value="'+E(DM.code||'')+'"><button class="btn" style="margin-top:14px" onclick="dmFriendGo()">ابدأ</button><button class="btn" style="'+g2s+'" onclick="dmFriendRnd()">رقم عشوائي</button><button class="btn" style="'+g2s+'" onclick="dmMenu(1)">رجوع</button></div>';m.style.display='flex'}
-async function dmHall(){clearTimeout(DM.t);DM.code='';DM.hall=1;DM.mode='lobby';DM.menu=1;dmHallUI([]);pvStart();
- try{pvHandle(await dmRpc('dm_hall_enter'))}catch(e){dmLobbyUI(0,'تعذر الاتصال — جرّب تاني')}}
-function dmHallUI(l){const m=dmEl('dmenu');if(!m)return;
- m.innerHTML='<div class="rcd" style="max-height:100%;overflow:auto"><h2>صالة اللعب</h2><div class="sc" style="line-height:1.8">'+(l.length?'اضغط على اسم زميلك عشان تلعبوا:':'أنت في الصالة. لما زميلك يدخل هتلاقي اسمه هنا.')+'</div>'+l.map(x=>'<button class="btn" style="'+g2s+'" onclick="dmJoin('+Number(x.sid)+')">العب ضد '+E(x.name)+'</button>').join('')+'<button class="btn" style="'+g2s+';margin-top:18px" onclick="dmLobbyCancel()">خروج من الصالة</button></div>';m.style.display='flex'}
-async function dmJoin(sid){try{const st=await dmRpc('dm_join',{p_sid:sid});if(st&&st.err){pvPoll();return}pvHandle(st)}catch(e){}}
+async function dmHall(){clearTimeout(DM.t);DM.code='';DM.hall=1;DM.mode='lobby';DM.menu=1;DM.plist=null;DM.hst=null;dmHallUI();pvStart();pvPoll()}
+function dmHallUI(st){const m=dmEl('dmenu');if(!m)return;if(st)DM.hst=st;st=DM.hst||{};
+ const L=DM.plist,io=st.inv_out,wait=io&&io.status=='pending',dec=io&&io.status=='declined'&&io.id!==DM.invSeen;
+ const chip=v=>'<button class="btn" style="'+(DM.tgt==v?'':g2s)+';flex:1;height:44px;font-size:15px;margin-top:0" onclick="dmTgt('+v+')">لحد '+v+'</button>';
+ let h='<div class="rcd" style="max-height:100%;overflow:auto"><h2>العب مع زميل</h2>';
+ if(wait)h+='<div class="sc" style="line-height:1.8;margin-top:6px">مستنيين رد '+E(io.to)+' <span class="dots"><i></i><i></i><i></i></span></div><button class="btn" style="'+g2s+';margin-top:16px" onclick="dmInvCancel()">إلغاء الدعوة</button>';
+ else{
+  if(dec)h+='<div class="al er" style="margin:8px 0">'+E(io.to)+' رفض الدعوة</div>';
+  h+='<div class="sc" style="margin-top:6px">المباراة لحد كام نقطة؟</div><div style="display:flex;gap:10px;margin:10px 0 14px">'+chip(100)+chip(150)+'</div>';
+  h+=L==null?'<div class="sc">جاري التحميل…</div>':L.length?'<div class="sc" style="margin-bottom:8px">الزملاء الفاتحين التطبيق دلوقتي — اضغط على اللي عايز تلعب معاه:</div>'+L.map(x=>'<button class="btn" style="'+g2s+';display:flex;justify-content:space-between;padding:0 18px" '+(x.busy?'disabled':'onclick="dmInvite(\''+E(x.cid)+'\')"')+'><span>'+E(x.name)+'</span><span style="font-size:13px;opacity:.7">'+(x.busy?'بيلعب دلوقتي':'ادعُه')+'</span></button>').join(''):'<div class="sc" style="line-height:1.8">مفيش زميل فاتح التطبيق دلوقتي. هتظهر الأسماء هنا أول ما حد يفتحه.</div>';
+  h+=(st.note=='busy'?'<div class="al er" style="margin-top:10px">الزميل ده بيلعب دلوقتي</div>':st.note=='offline'?'<div class="al er" style="margin-top:10px">الزميل ده خرج من التطبيق</div>':'')+'<button class="btn" style="'+g2s+';margin-top:16px" onclick="dmLobbyCancel()">رجوع</button>'}
+ h+='</div>';if(m.dataset.h!==h){m.innerHTML=h;m.dataset.h=h}m.style.display='flex'}
+function dmTgt(v){DM.tgt=v;if(DM.hst&&DM.hst.inv_out)DM.invSeen=DM.hst.inv_out.id;dmHallUI()}
+async function dmInvite(cid){if(DM.hst&&DM.hst.inv_out)DM.invSeen=DM.hst.inv_out.id;try{pvHandle(await dmRpc('dm_invite',{p_to:cid,p_target:DM.tgt}))}catch(e){}}
+async function dmInvCancel(){try{pvHandle(await dmRpc('dm_invite_cancel'))}catch(e){}}
+async function dmReady(){if(!PG||DM.busy)return;DM.busy=1;try{pvHandle(await dmRpc('dm_ready',{p_game:PG.id}))}catch(e){}DM.busy=0}
 function dmFriendRnd(){const i=dmEl('dcode');if(i)i.value=String(Math.floor(1000+Math.random()*9000))}
 function dmFriendGo(){const i=dmEl('dcode'),c=A2(i?i.value:'').replace(/\D/g,'');if(c.length!=4){i&&i.focus();return}dmGoPvp(c)}
 function dmLobbyUI(n,msg){const m=dmEl('dmenu');if(!m)return;
@@ -450,29 +468,30 @@ function dmLobbyUI(n,msg){const m=dmEl('dmenu');if(!m)return;
 async function dmGoPvp(code){
  clearTimeout(DM.t);DM.code=code||'';DM.hall=0;DM.mode='lobby';DM.menu=1;dmLobbyUI(0);pvStart();
  try{pvHandle(await dmRpc('dm_find',DM.code?{p_code:DM.code}:{}))}catch(e){dmLobbyUI(0,'تعذر الاتصال — جرّب تاني')}}
-function dmLobbyCancel(){dmRpc('dm_cancel').catch(()=>{});pvStop();DM.mode='';dmMenu(1)}
+function dmLobbyCancel(){dmRpc('dm_cancel').catch(()=>{});dmRpc('dm_invite_cancel').catch(()=>{});pvStop();DM.mode='';dmMenu(1)}
 function dmEnterPvp(v){DM.mode='pvp';DM.menu=0;PG=null;clearTimeout(DM.t);dmEl('dmenu').style.display='none';dmEl('dres').style.display='none';pvStart();dmApply(v)}
 function pvHandle(st){if(!st||!DM.open)return;DM.wins=st.wins||0;DM.lob=st.lobby||0;
  if(st.game){if(DM.mode=='lobby')dmEnterPvp(st.game);else if(DM.mode=='pvp')dmApply(st.game)}
- else if(DM.mode=='lobby'){if(DM.hall)dmHallUI(st.hall||[]);else dmLobbyUI(st.lobby)}}
+ else if(DM.mode=='lobby'){if(DM.hall)dmHallUI(st);else dmLobbyUI(st.lobby)}}
 function pvStart(){pvStop();DM.pi=setInterval(pvPoll,2500)}
 function pvStop(){clearInterval(DM.pi);DM.pi=0;if(DM.ch){try{sb.removeChannel(DM.ch)}catch(e){}}DM.ch=null;DM.chId=0}
 function pvSub(id){if(DM.chId===id)return;if(DM.ch){try{sb.removeChannel(DM.ch)}catch(e){}}DM.chId=id;try{DM.ch=sb.channel('dm'+id).on('broadcast',{event:'g'},()=>pvPoll()).subscribe()}catch(e){}}
-async function pvPoll(){if(!DM.open||document.hidden||(DM.mode!='pvp'&&DM.mode!='lobby'))return;try{pvHandle(await dmRpc('dm_state'))}catch(e){}}
+async function pvPoll(){if(!DM.open||document.hidden||(DM.mode!='pvp'&&DM.mode!='lobby'))return;try{const st=await dmRpc('dm_state');if(DM.mode=='lobby'&&DM.hall){try{DM.plist=await dmRpc('dm_players')}catch(e){}}pvHandle(st)}catch(e){}}
 function dmApply(v){
  if(!v||!DM.open||DM.mode!='pvp')return;
  const prev=PG,same=prev&&prev.id==v.id;
  if(same&&v.ver<prev.ver)return;
  if(DM.drag){DM.pv=v;return}
  DM.moveAt=Date.now()-(v.idle||0)*1000;DM.opp=v.opp||DM.opp;
- if(same&&v.ver==prev.ver){const t=!prev.over&&prev.turn=='cpu'&&dmIdle()>=90;if(t!=!!DM.tmo){DM.tmo=t;dmRender()}return}
+ if(same&&v.ver==prev.ver){const t=!prev.over&&prev.turn=='cpu'&&dmIdle()>=90;if(t!=!!DM.tmo){DM.tmo=t;dmRender()}if(prev.over&&prev.st=='between'&&prev.rdy&&!prev.rdyo){const tt=dmIdle()>=120;if(tt!=!!DM.tmo2)dmEnd()}return}
  const G=dmMap(v);PG=G;pvSub(v.id);DM.tmo=0;
  if(!same&&v.ver==0){DM.deal=1;sShuffle()}
+ if(same&&G.rd!==prev.rd){DM.deal=1;sShuffle();DM.note=''}
  if(same){
   if(G.chain.length!=prev.chain.length){DM.anim=1;if(G.lastBy=='cpu'){sClack();DM.note=''}}
   else if(G.cpu.length>prev.cpu.length&&G.stock.length<prev.stock.length){DM.note=OPN()+' سحب حجر من الكومة';sSlide()}
   else if(G.passes>prev.passes&&G.turn=='me'){DM.note=OPN()+' عدّى دوره';sPass()}}
- DM.pick=-1;dmRender();if(G.over)dmEnd();else dmAuto()}
+ DM.pick=-1;dmRender();if(G.over)dmEnd();else{const rr=dmEl('dres');if(rr&&rr.dataset.g){rr.style.display='none';rr.dataset.g=''}dmAuto()}}
 async function dmDo(kind,t,side){
  if(DM.busy)return;DM.busy=1;
  try{const r=await dmRpc('dm_move',{p_game:PG.id,p_kind:kind,p_a:t?t[0]:null,p_b:t?t[1]:null,p_side:side||null});
@@ -492,11 +511,11 @@ function dmLegal(G){return G.turn=='me'&&!G.over&&G.me.some(t=>dSides(G,t).lengt
 function dmRender(){
  const G=dmG();if(!G||!DM.open)return;
  const pv=DM.mode=='pvp',act=G.turn,pc=v=>Math.min(100,v);
- dmEl('dsb').innerHTML=pv?'<div class="dsc2 '+(act=='me'&&!G.over?'act':'')+'"><div class="dr"><span class="n">أنت</span><span class="v">'+N(G.me.length)+'</span></div><div class="bar"><i style="width:'+pc(G.me.length*14)+'%"></i></div></div>'
-  +'<div class="dsc2 '+(act=='cpu'&&!G.over?'act':'')+'"><div class="dr"><span class="n">'+OPN()+'</span><span class="v">'+N(G.cpu.length)+'</span></div><div class="bar"><i style="width:'+pc(G.cpu.length*14)+'%"></i></div></div>'
+ dmEl('dsb').innerHTML=pv?'<div class="dsc2 '+(act=='me'&&!G.over?'act':'')+'"><div class="dr"><span class="n">أنت</span><span class="v">'+N(G.sc.me)+'<small style="opacity:.6;font-size:12px"> / '+N(G.tg)+'</small></span></div><div class="bar"><i style="width:'+pc(G.sc.me*100/G.tg)+'%"></i></div></div>'
+  +'<div class="dsc2 '+(act=='cpu'&&!G.over?'act':'')+'"><div class="dr"><span class="n">'+OPN()+'</span><span class="v">'+N(G.sc.opp)+'<small style="opacity:.6;font-size:12px"> / '+N(G.tg)+'</small></span></div><div class="bar"><i style="width:'+pc(G.sc.opp*100/G.tg)+'%"></i></div></div>'
   :'<div class="dsc2 '+(act=='me'&&!G.over?'act':'')+'"><div class="dr"><span class="n">أنت</span><span class="v">'+N(DS.me)+'</span></div><div class="bar"><i style="width:'+pc(DS.me)+'%"></i></div></div>'
   +'<div class="dsc2 '+(act=='cpu'&&!G.over?'act':'')+'"><div class="dr"><span class="n">الكمبيوتر</span><span class="v">'+N(DS.cpu)+'</span></div><div class="bar"><i style="width:'+pc(DS.cpu)+'%"></i></div></div>';
- dmEl('dopp').innerHTML='<span class="dlb">أحجار '+OPN()+' ('+N(G.cpu.length)+')</span>'+G.cpu.map(()=>'<span class="dk"></span>').join('');
+ dmEl('dopp').innerHTML='<span class="dlb">أحجار '+OPN()+' ('+N(G.cpu.length)+')'+(pv?' · الجولة '+N(G.rd):'')+'</span>'+G.cpu.map(()=>'<span class="dk"></span>').join('');
  const bd=dmEl('dbd'),W=bd.clientWidth-20,gap=3,H=bd.clientHeight-24;
  const mk=s=>{const wOf=t=>(t[0]==t[1]?s:2*s)+2,rs=[];let row=[],w=0;G.chain.forEach(t=>{const tw=wOf(t)+gap;if(w+tw>W+gap&&row.length){rs.push(row);row=[];w=0}row.push(t);w+=tw});if(row.length)rs.push(row);return rs},
   hOf=(rs,s)=>rs.reduce((a,r)=>a+(r.some(t=>t[0]==t[1])?2*s+2:s+2)+5,0);
@@ -596,18 +615,23 @@ addEventListener('pointercancel',e=>{if(DM.dp&&e.pointerId==DM.dp.id)dmDragEnd(t
 /* ---- النهاية ---- */
 function dmConfetti(){const r=dmEl('dres');if(!r)return;const cs=['#F6BC2F','#00A8E1','#E5484D','#46C47A','#fff'];let h='';for(let i=0;i<26;i++)h+='<i class="cf" style="left:'+Math.round(Math.random()*100)+'%;background:'+cs[i%5]+';animation-delay:'+(Math.random()*.9).toFixed(2)+'s"></i>';r.insertAdjacentHTML('beforeend',h)}
 function dmEnd(){const G=dmG(),o=G&&G.over,r=dmEl('dres');if(!r||!o)return;const pv=DM.mode=='pvp';let first;
- if(pv){first=DM.endId!==G.id;DM.endId=G.id}
+ if(pv){const k=G.id+':'+G.rd;first=DM.endId!==k;DM.endId=k}
  else{first=!o.done;o.done=1;if(first){if(o.who=='me')DS.me+=o.pts;else if(o.who=='cpu')DS.cpu+=o.pts;sv('teko-dm',DS)}}
  if(first)setTimeout(()=>{o.who=='me'?sWin():o.who=='cpu'?sLose():sPass()},350);
  dmRender();
- if(pv&&!first&&r.dataset.g==String(G.id))return;
- const nm=OPN(),fin=!pv&&(DS.me>=100||DS.cpu>=100),win=DS.me>=100&&DS.me>=DS.cpu;
- const t=pv?(o.who=='me'?'كسبت اللعبة 🎉':o.who=='cpu'?'خسرت اللعبة':'تعادل'):fin?(win?'فزت بالمباراة 🏆':'الكمبيوتر فاز بالمباراة'):o.who=='me'?'كسبت الجولة 🎉':o.who=='cpu'?'الكمبيوتر كسب الجولة':'تعادل';
- const d=o.who=='tie'?'القفلة متعادلة':o.why=='quit'?(o.who=='me'?nm+' انسحب':'انسحبت من اللعبة'):o.why=='timeout'?(o.who=='me'?nm+' ما ردّش واتحسبت لك':'اتحسبت عليك لأنك ما ردّيتش'):(o.why=='block'?'قفلة — ':'دومينو — ')+(o.who=='me'?'خدت ':nm+' خد ')+N(o.pts)+' نقطة';
- r.innerHTML='<div class="rcd"><h2>'+t+'</h2><div class="sc">'+d+'</div>'+(pv?'':'<div class="sc" style="margin-top:6px">أنت '+N(DS.me)+' · الكمبيوتر '+N(DS.cpu)+'</div>')
-  +(pv?'<button class="btn" style="margin-top:20px" onclick="dmLeavePvp(1)">'+(DM.hall?'ارجع لصالة اللعب':DM.code?'العب تاني مع زميلك':'العب تاني ضد طيار')+'</button><button class="btn" style="'+g2s+'" onclick="dmLeavePvp(0)">القائمة</button>'
-   :'<button class="btn" style="margin-top:20px" onclick="dmNext('+(fin?1:0)+')">'+(fin?'مباراة جديدة':'جولة جديدة')+'</button><button class="btn" style="'+g2s+'" onclick="dmMenu()">القائمة</button>')+'</div>';
- r.dataset.g=String(G.id||'cpu');r.style.display='flex';if(o.who=='me'&&first)dmConfetti()}
+ const tt=pv&&G.st=='between'&&G.rdy&&!G.rdyo&&dmIdle()>=120;DM.tmo2=tt;
+ const key=pv?[G.id,G.rd,G.st,G.rdy,G.rdyo,tt?1:0].join(':'):String(G.id||'cpu');
+ if(r.dataset.g===key&&!first)return;
+ const nm=OPN(),mover=pv&&G.st=='over',fin=pv?mover:(DS.me>=100||DS.cpu>=100),win=pv?o.who=='me':(DS.me>=100&&DS.me>=DS.cpu);
+ const t=pv?(mover?(o.who=='me'?'فزت بالمباراة 🏆':'خسرت المباراة'):(o.who=='me'?'كسبت الجولة 🎉':o.who=='cpu'?nm+' كسب الجولة':'الجولة تعادلت')):fin?(win?'فزت بالمباراة 🏆':'الكمبيوتر فاز بالمباراة'):o.who=='me'?'كسبت الجولة 🎉':o.who=='cpu'?'الكمبيوتر كسب الجولة':'تعادل';
+ const d=o.who=='tie'?'القفلة متعادلة':o.why=='quit'?(o.who=='me'?nm+' انسحب من المباراة':'انسحبت من المباراة'):o.why=='timeout'?(o.who=='me'?nm+' ما ردّش واتحسبت لك':'اتحسبت عليك لأنك ما ردّيتش'):(o.why=='block'?'قفلة — ':'دومينو — ')+(o.who=='me'?'خدت ':nm+' خد ')+N(o.pts)+' نقطة';
+ const sc=pv?'<div class="sc" style="margin-top:6px">أنت '+N(G.sc.me)+' · '+nm+' '+N(G.sc.opp)+' (لحد '+N(G.tg)+')</div>':'<div class="sc" style="margin-top:6px">أنت '+N(DS.me)+' · الكمبيوتر '+N(DS.cpu)+'</div>';
+ let b;
+ if(pv&&!mover)b=(G.rdy?'<div class="sc" style="margin-top:16px">مستنيين '+nm+' <span class="dots"><i></i><i></i><i></i></span></div>'+(tt?'<button class="btn" style="margin-top:12px" onclick="dmTimeout()">إنهاء المباراة — '+nm+' ما ردّش</button>':''):(G.rdyo?'<div class="sc" style="margin-top:14px">'+nm+' جاهز للجولة الجاية</div>':'')+'<button class="btn" style="margin-top:16px" onclick="dmReady()">الجولة الجاية</button>')+'<button class="btn" style="'+g2s+'" onclick="dmQuit()">انسحاب</button>';
+ else if(pv)b='<button class="btn" style="margin-top:20px" onclick="dmLeavePvp(1)">العب مع زميل تاني</button><button class="btn" style="'+g2s+'" onclick="dmLeavePvp(0)">القائمة</button>';
+ else b='<button class="btn" style="margin-top:20px" onclick="dmNext('+(fin?1:0)+')">'+(fin?'مباراة جديدة':'جولة جديدة')+'</button><button class="btn" style="'+g2s+'" onclick="dmMenu()">القائمة</button>';
+ r.innerHTML='<div class="rcd"><h2>'+t+'</h2><div class="sc">'+d+'</div>'+sc+b+'</div>';
+ r.dataset.g=key;r.style.display='flex';if(o.who=='me'&&first)dmConfetti()}
 function dmNext(reset){if(reset){DS={me:0,cpu:0};sv('teko-dm',DS)}DG=dNew();DM.pick=-1;DM.note='';DM.deal=1;sShuffle();const r=dmEl('dres');if(r){r.style.display='none';r.dataset.g=''}dmRender();if(DG.turn=='cpu')dmCpuGo();else dmAuto()}
 function dmUpd(){
  if(typeof DM=='undefined')return;
