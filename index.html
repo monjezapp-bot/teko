@@ -163,6 +163,19 @@ body:has(.md) #tb{display:none!important}
 #dm .dbd.dzh{box-shadow:inset 0 0 34px rgba(246,188,47,.3),0 0 0 3px #F6BC2F,0 0 30px rgba(246,188,47,.75)}
 #dm .dt.dtg{box-shadow:0 0 0 3px #F6BC2F,0 0 14px rgba(246,188,47,.8);animation:dpulse 1s ease-in-out infinite}
 #dm .dt.dtgh{box-shadow:0 0 0 4px #fff,0 0 22px #F6BC2F}
+
+/* ===== ترابيزة أكبر: ضغط الهيدر واليد ===== */
+#dm .dopp{min-height:26px;margin-top:4px}
+#dm .dk{width:14px;height:22px;margin-inline-end:-5px;border-radius:4px}
+#dm .dstk .pile{width:24px;height:34px}
+#dm .dmsg{min-height:40px;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:14px}
+#dm .dmsg .dctl .btn{height:38px;font-size:14px;border-radius:12px}
+#dm .dnote{min-height:0}#dm .dnote:empty{display:none}
+#dm .dhand{flex-wrap:nowrap;gap:0;justify-content:center;padding:4px 0 2px;min-height:calc(var(--s)*2 + 12px)}
+#dm .dh{flex:none}
+#dm .dh+.dh{margin-inline-start:var(--ov,6px)}
+#dm .dh.ok{position:relative;z-index:1}
+#dm .dbd{margin:4px 0}
 </style></head><body>
 <div id="app" class="app"></div>
 <script src="config.js"></script>
@@ -348,7 +361,7 @@ function dPass(G,who){
  else G.turn=who=='me'?'cpu':'me'}
 
 function ldG(){const g=ld('teko-dmg',null);if(!g||!Array.isArray(g.me)||!Array.isArray(g.cpu)||!Array.isArray(g.chain)||!Array.isArray(g.stock))return null;g.lastTile=null;g.newTile=null;return g}
-var DM={open:0,hold:0,ack:0,pp:0,t:0,pick:-1,deal:0,anim:0,note:'',mode:'',menu:0,busy:0,drag:0,dp:null,pv:null,wins:0,lob:0,opp:'',moveAt:0,code:'',tmo:0,pi:0,ch:null,chId:0,endId:0,noclick:0},DG=ldG(),PG=null;
+var DM={open:0,hold:0,ack:0,pp:0,t:0,pick:-1,deal:0,anim:0,note:'',mode:'',menu:0,busy:0,drag:0,dp:null,pv:null,wins:0,lob:0,opp:'',moveAt:0,code:'',hall:0,tmo:0,pi:0,ch:null,chId:0,endId:0,noclick:0},DG=ldG(),PG=null;
 let DS=ld('teko-dm',{me:0,cpu:0});
 var SND={on:ld('teko-snd',1)!==0};
 /* --- أصوات (مولّدة بالكود، من غير ملفات) --- */
@@ -411,7 +424,7 @@ function dmMenu(nf){
  else h+='<div class="sc">'+(DM.wins?'كسبت '+N(DM.wins)+' مباراة ضد طيارين 🏆':'اختار تلعب ضد مين')+'</div>'
   +'<button class="btn" style="margin-top:20px" onclick="dmGoCpu(0)">'+(cpuLive?'كمّل ضد الكمبيوتر':'ضد الكمبيوتر')+'</button>'
   +(cpuLive?'<button class="btn" style="'+g2s+'" onclick="dmGoCpu(1)">جولة جديدة ضد الكمبيوتر</button>':'')
-  +'<button class="btn" style="'+g2s+'" onclick="dmFriend()">العب مع زميل (بكود)</button><button class="btn" style="'+g2s+'" onclick="dmGoPvp()">ضد أي طيار'+(DM.lob?' — '+N(DM.lob)+' مستني':'')+'</button>';
+  +'<button class="btn" style="'+g2s+'" onclick="dmHall()">صالة اللعب</button><button class="btn" style="'+g2s+'" onclick="dmFriend()">العب مع زميل (بكود)</button><button class="btn" style="'+g2s+'" onclick="dmGoPvp()">ضد أي طيار'+(DM.lob?' — '+N(DM.lob)+' مستني':'')+'</button>';
  h+='<button class="btn" style="'+g2s+'" onclick="goTab(\'home\')">رجوع للرئيسية</button></div>';
  m.innerHTML=h;m.style.display='flex';
  if(!nf&&!pvLive)dmRpc('dm_state').then(st=>{if(st&&DM.menu&&!DM.mode&&(DM.lob!=st.lobby||DM.wins!=st.wins)){DM.lob=st.lobby;DM.wins=st.wins;dmMenu(1)}}).catch(()=>{})}
@@ -425,18 +438,23 @@ function dmGoCpu(fresh){
 /* ---- طيار ضد طيار ---- */
 function dmFriend(){const m=dmEl('dmenu');if(!m)return;
  m.innerHTML='<div class="rcd"><h2>العب مع زميل</h2><div class="sc" style="line-height:1.8">اتفقوا على رقم من ٤ أرقام (أي رقم)، واكتبوه إنتوا الاتنين</div><input id="dcode" class="in" dir="ltr" inputmode="numeric" maxlength="4" placeholder="0000" style="margin-top:16px;text-align:center;font-size:28px;letter-spacing:6px" value="'+E(DM.code||'')+'"><button class="btn" style="margin-top:14px" onclick="dmFriendGo()">ابدأ</button><button class="btn" style="'+g2s+'" onclick="dmFriendRnd()">رقم عشوائي</button><button class="btn" style="'+g2s+'" onclick="dmMenu(1)">رجوع</button></div>';m.style.display='flex'}
+async function dmHall(){clearTimeout(DM.t);DM.code='';DM.hall=1;DM.mode='lobby';DM.menu=1;dmHallUI([]);pvStart();
+ try{pvHandle(await dmRpc('dm_hall_enter'))}catch(e){dmLobbyUI(0,'تعذر الاتصال — جرّب تاني')}}
+function dmHallUI(l){const m=dmEl('dmenu');if(!m)return;
+ m.innerHTML='<div class="rcd" style="max-height:100%;overflow:auto"><h2>صالة اللعب</h2><div class="sc" style="line-height:1.8">'+(l.length?'اضغط على اسم زميلك عشان تلعبوا:':'أنت في الصالة. لما زميلك يدخل هتلاقي اسمه هنا.')+'</div>'+l.map(x=>'<button class="btn" style="'+g2s+'" onclick="dmJoin('+Number(x.sid)+')">العب ضد '+E(x.name)+'</button>').join('')+'<button class="btn" style="'+g2s+';margin-top:18px" onclick="dmLobbyCancel()">خروج من الصالة</button></div>';m.style.display='flex'}
+async function dmJoin(sid){try{const st=await dmRpc('dm_join',{p_sid:sid});if(st&&st.err){pvPoll();return}pvHandle(st)}catch(e){}}
 function dmFriendRnd(){const i=dmEl('dcode');if(i)i.value=String(Math.floor(1000+Math.random()*9000))}
 function dmFriendGo(){const i=dmEl('dcode'),c=A2(i?i.value:'').replace(/\D/g,'');if(c.length!=4){i&&i.focus();return}dmGoPvp(c)}
 function dmLobbyUI(n,msg){const m=dmEl('dmenu');if(!m)return;
  m.innerHTML='<div class="rcd"><h2>'+(DM.code?'مستنيين زميلك':'بندوّر على خصم')+'</h2>'+(DM.code?'<div class="huge" dir="ltr" style="letter-spacing:6px">'+E(DM.code)+'</div>':'')+'<div class="sc" style="line-height:1.8">'+(msg||(DM.code?'خلّي زميلك يدخل نفس الرقم':'استنى لحد ما طيار تاني يدخل الدومينو'+(n?' — فيه '+N(n)+' مستني':'')))+'</div><button class="btn" style="'+g2s+';margin-top:20px" onclick="dmLobbyCancel()">إلغاء</button></div>';m.style.display='flex'}
 async function dmGoPvp(code){
- clearTimeout(DM.t);DM.code=code||'';DM.mode='lobby';DM.menu=1;dmLobbyUI(0);pvStart();
+ clearTimeout(DM.t);DM.code=code||'';DM.hall=0;DM.mode='lobby';DM.menu=1;dmLobbyUI(0);pvStart();
  try{pvHandle(await dmRpc('dm_find',DM.code?{p_code:DM.code}:{}))}catch(e){dmLobbyUI(0,'تعذر الاتصال — جرّب تاني')}}
 function dmLobbyCancel(){dmRpc('dm_cancel').catch(()=>{});pvStop();DM.mode='';dmMenu(1)}
 function dmEnterPvp(v){DM.mode='pvp';DM.menu=0;PG=null;clearTimeout(DM.t);dmEl('dmenu').style.display='none';dmEl('dres').style.display='none';pvStart();dmApply(v)}
 function pvHandle(st){if(!st||!DM.open)return;DM.wins=st.wins||0;DM.lob=st.lobby||0;
  if(st.game){if(DM.mode=='lobby')dmEnterPvp(st.game);else if(DM.mode=='pvp')dmApply(st.game)}
- else if(DM.mode=='lobby')dmLobbyUI(st.lobby)}
+ else if(DM.mode=='lobby'){if(DM.hall)dmHallUI(st.hall||[]);else dmLobbyUI(st.lobby)}}
 function pvStart(){pvStop();DM.pi=setInterval(pvPoll,2500)}
 function pvStop(){clearInterval(DM.pi);DM.pi=0;if(DM.ch){try{sb.removeChannel(DM.ch)}catch(e){}}DM.ch=null;DM.chId=0}
 function pvSub(id){if(DM.chId===id)return;if(DM.ch){try{sb.removeChannel(DM.ch)}catch(e){}}DM.chId=id;try{DM.ch=sb.channel('dm'+id).on('broadcast',{event:'g'},()=>pvPoll()).subscribe()}catch(e){}}
@@ -468,7 +486,7 @@ async function dmTimeout(){if(!PG)return;try{pvHandle(await dmRpc('dm_timeout',{
 async function dmLeavePvp(again){
  if(PG)await dmRpc('dm_ack',{p_game:PG.id}).catch(()=>{});
  pvStop();PG=null;DM.mode='';DM.endId=0;const r=dmEl('dres');if(r){r.style.display='none';r.dataset.g=''}
- if(again)dmGoPvp(DM.code);else dmMenu()}
+ if(again){if(DM.hall)dmHall();else dmGoPvp(DM.code)}else dmMenu()}
 /* ---- الرسم ---- */
 function dmLegal(G){return G.turn=='me'&&!G.over&&G.me.some(t=>dSides(G,t).length)}
 function dmRender(){
@@ -479,10 +497,12 @@ function dmRender(){
   :'<div class="dsc2 '+(act=='me'&&!G.over?'act':'')+'"><div class="dr"><span class="n">أنت</span><span class="v">'+N(DS.me)+'</span></div><div class="bar"><i style="width:'+pc(DS.me)+'%"></i></div></div>'
   +'<div class="dsc2 '+(act=='cpu'&&!G.over?'act':'')+'"><div class="dr"><span class="n">الكمبيوتر</span><span class="v">'+N(DS.cpu)+'</span></div><div class="bar"><i style="width:'+pc(DS.cpu)+'%"></i></div></div>';
  dmEl('dopp').innerHTML='<span class="dlb">أحجار '+OPN()+' ('+N(G.cpu.length)+')</span>'+G.cpu.map(()=>'<span class="dk"></span>').join('');
- const bd=dmEl('dbd'),W=bd.clientWidth-20,gap=3,s=Math.max(22,Math.min(34,Math.floor((W-4*gap)/10)-1));
+ const bd=dmEl('dbd'),W=bd.clientWidth-20,gap=3,H=bd.clientHeight-24;
+ const mk=s=>{const wOf=t=>(t[0]==t[1]?s:2*s)+2,rs=[];let row=[],w=0;G.chain.forEach(t=>{const tw=wOf(t)+gap;if(w+tw>W+gap&&row.length){rs.push(row);row=[];w=0}row.push(t);w+=tw});if(row.length)rs.push(row);return rs},
+  hOf=(rs,s)=>rs.reduce((a,r)=>a+(r.some(t=>t[0]==t[1])?2*s+2:s+2)+5,0);
+ let s=Math.max(22,Math.min(34,Math.floor((W-4*gap)/10)-1)),rows=mk(s);
+ while(s>14&&hOf(rows,s)>H){s-=2;rows=mk(s)}
  bd.style.setProperty('--s',s+'px');
- const wOf=t=>(t[0]==t[1]?s:2*s)+2,rows=[];let row=[],w=0;
- G.chain.forEach(t=>{const tw=wOf(t)+gap;if(w+tw>W+gap&&row.length){rows.push(row);row=[];w=0}row.push(t);w+=tw});if(row.length)rows.push(row);
  const pick=DM.pick>=0&&G.chain.length>1,last=G.chain.length-1;
  bd.innerHTML=rows.length?rows.map((r,ri)=>'<div class="drow '+(ri%2?'rv':'')+'">'+r.map(t=>{
    const idx=G.chain.indexOf(t),dbl=t[0]==t[1],flip=ri%2&&!dbl,tt=flip?[t[1],t[0]]:t;
@@ -495,7 +515,8 @@ function dmRender(){
  dmEl('dends').innerHTML=G.chain.length?'<span>الأطراف المفتوحة:</span><span class="dend">'+G.ends[0]+'</span><span class="dend">'+G.ends[1]+'</span>':'';
  const need=G.turn=='me'&&!G.over&&!dmLegal(G)&&G.stock.length>0;
  const stk=dmEl('dstk');stk.className='dstk'+(need?' need':'');stk.innerHTML='<span class="pile"></span><span>الكومة<br><b>'+N(G.stock.length)+'</b></span>';
- const n=G.me.length,hs=n<=7?38:n<=9?34:30,hd=dmEl('dhand');hd.style.setProperty('--s',hs+'px');
+ const n=G.me.length,hs=n<=7?38:n<=9?34:n<=11?30:26,hd=dmEl('dhand');hd.style.setProperty('--s',hs+'px');
+ {const tw=hs+4,av=hd.clientWidth-8;hd.style.setProperty('--ov',(n>1&&n*tw+(n-1)*6>av?Math.max(-tw+10,(av-n*tw)/(n-1)):6)+'px')}
  const mine=G.turn=='me'&&!G.over;
  hd.innerHTML=G.me.map((t,i)=>{const ok=mine&&dSides(G,t).length>0;
   let c=(ok?'ok ':'')+(DM.pick==i?'sel ':''),st='';
@@ -508,9 +529,9 @@ function dmRender(){
  else if(DM.pick>=0){msg='اختار الطرف اللي هتحط فيه الحجر';ctl='<button class="btn g" onclick="dmPlaceSide(\'L\')">أول السلسلة ('+G.ends[0]+')</button><button class="btn g" onclick="dmPlaceSide(\'R\')">آخر السلسلة ('+G.ends[1]+')</button>'}
  else if(!G.chain.length)msg='دورك — اسحب الحجر المضيء للوح أو اضغط عليه';
  else if(dmLegal(G))msg='دورك — اسحب حجر مضيء للوح أو اضغط عليه';
- else if(G.stock.length){msg='مفيش حجر مناسب — اسحب من الكومة';ctl='<button class="btn" onclick="dmDraw()">اسحب من الكومة ('+N(G.stock.length)+')</button>'}
+ else if(G.stock.length){msg='مفيش حجر مناسب — اضغط على الكومة واسحب'}
  else msg='مفيش حجر مناسب — هتعدّي دورك';
- dmEl('dmsg').innerHTML=msg;dmEl('dnote').textContent=DM.note||(pv&&mine?'لو سبت دورك أكتر من ٩٠ ثانية الخصم يقدر ينهي اللعبة':'');dmEl('dctl').innerHTML=ctl;
+ dmEl('dmsg').innerHTML=ctl?'<div class="dctl" style="width:100%">'+ctl+'</div>':'<span>'+msg+'</span>';dmEl('dnote').textContent=DM.note||(pv&&mine?'لو سبت دورك أكتر من ٩٠ ثانية الخصم يقدر ينهي اللعبة':'');dmEl('dctl').innerHTML='';
  dmSave()}
 /* ---- اللعب: ضغط أو سحب ---- */
 function dmTap(i){const G=dmG();if(Date.now()<DM.noclick)return;if(!G||G.over||G.turn!='me'||dmBusy())return;
@@ -584,7 +605,7 @@ function dmEnd(){const G=dmG(),o=G&&G.over,r=dmEl('dres');if(!r||!o)return;const
  const t=pv?(o.who=='me'?'كسبت اللعبة 🎉':o.who=='cpu'?'خسرت اللعبة':'تعادل'):fin?(win?'فزت بالمباراة 🏆':'الكمبيوتر فاز بالمباراة'):o.who=='me'?'كسبت الجولة 🎉':o.who=='cpu'?'الكمبيوتر كسب الجولة':'تعادل';
  const d=o.who=='tie'?'القفلة متعادلة':o.why=='quit'?(o.who=='me'?nm+' انسحب':'انسحبت من اللعبة'):o.why=='timeout'?(o.who=='me'?nm+' ما ردّش واتحسبت لك':'اتحسبت عليك لأنك ما ردّيتش'):(o.why=='block'?'قفلة — ':'دومينو — ')+(o.who=='me'?'خدت ':nm+' خد ')+N(o.pts)+' نقطة';
  r.innerHTML='<div class="rcd"><h2>'+t+'</h2><div class="sc">'+d+'</div>'+(pv?'':'<div class="sc" style="margin-top:6px">أنت '+N(DS.me)+' · الكمبيوتر '+N(DS.cpu)+'</div>')
-  +(pv?'<button class="btn" style="margin-top:20px" onclick="dmLeavePvp(1)">'+(DM.code?'العب تاني مع زميلك':'العب تاني ضد طيار')+'</button><button class="btn" style="'+g2s+'" onclick="dmLeavePvp(0)">القائمة</button>'
+  +(pv?'<button class="btn" style="margin-top:20px" onclick="dmLeavePvp(1)">'+(DM.hall?'ارجع لصالة اللعب':DM.code?'العب تاني مع زميلك':'العب تاني ضد طيار')+'</button><button class="btn" style="'+g2s+'" onclick="dmLeavePvp(0)">القائمة</button>'
    :'<button class="btn" style="margin-top:20px" onclick="dmNext('+(fin?1:0)+')">'+(fin?'مباراة جديدة':'جولة جديدة')+'</button><button class="btn" style="'+g2s+'" onclick="dmMenu()">القائمة</button>')+'</div>';
  r.dataset.g=String(G.id||'cpu');r.style.display='flex';if(o.who=='me'&&first)dmConfetti()}
 function dmNext(reset){if(reset){DS={me:0,cpu:0};sv('teko-dm',DS)}DG=dNew();DM.pick=-1;DM.note='';DM.deal=1;sShuffle();const r=dmEl('dres');if(r){r.style.display='none';r.dataset.g=''}dmRender();if(DG.turn=='cpu')dmCpuGo();else dmAuto()}
@@ -602,6 +623,7 @@ function dmUpd(){
  if(hold!=DM.hold){DM.hold=hold;if(!hold&&!DM.menu)dmResume()}
  DM.pp=p}
 document.addEventListener('visibilitychange',()=>dmUpd());
+addEventListener('resize',()=>{if(DM.open&&!DM.menu&&dmG())dmRender()});
 
 /* ===== شريط التنقل السفلي ===== */
 var TAB='home';
