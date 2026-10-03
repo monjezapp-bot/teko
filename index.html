@@ -424,7 +424,7 @@ function dmMenu(nf){
  else h+='<div class="sc">'+(DM.wins?'كسبت '+N(DM.wins)+' مباراة ضد طيارين 🏆':'اختار تلعب ضد مين')+'</div>'
   +'<button class="btn" style="margin-top:20px" onclick="dmGoCpu(0)">'+(cpuLive?'كمّل ضد الكمبيوتر':'ضد الكمبيوتر')+'</button>'
   +(cpuLive?'<button class="btn" style="'+g2s+'" onclick="dmGoCpu(1)">جولة جديدة ضد الكمبيوتر</button>':'')
-  +'<button class="btn" style="'+g2s+'" onclick="dmHall()">صالة اللعب</button><button class="btn" style="'+g2s+'" onclick="dmFriend()">العب مع زميل (بكود)</button><button class="btn" style="'+g2s+'" onclick="dmGoPvp()">ضد أي طيار'+(DM.lob?' — '+N(DM.lob)+' مستني':'')+'</button>';
+  +'<button class="btn" style="'+g2s+'" onclick="dmHall()">صالة اللعب</button>';
  h+='<button class="btn" style="'+g2s+'" onclick="goTab(\'home\')">رجوع للرئيسية</button></div>';
  m.innerHTML=h;m.style.display='flex';
  if(!nf&&!pvLive)dmRpc('dm_state').then(st=>{if(st&&DM.menu&&!DM.mode&&(DM.lob!=st.lobby||DM.wins!=st.wins)){DM.lob=st.lobby;DM.wins=st.wins;dmMenu(1)}}).catch(()=>{})}
